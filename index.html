@@ -464,6 +464,22 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
   .then-now>div:first-child{padding-right:16px}
   .top>*+*{margin-left:10px}
 }
+.sync-btn .dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;border:2px solid var(--ink);background:#C9C5E8;margin-right:.45em;vertical-align:-.05em}
+.sync-btn.is-on .dot{background:#1E9A57}
+.sync-btn.is-wait .dot{background:#F2C14E}
+.sync-btn.is-err .dot{background:#E4485A}
+.sync-overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;background:rgba(30,26,77,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.sync-overlay[hidden]{display:none}
+.sync-card{width:460px;max-width:100%;padding:28px 30px;color:var(--ink)}
+.sync-card h3{margin:0 0 .4rem;font-size:1.7rem;font-weight:800;letter-spacing:-.02em}
+.sync-help{margin:0 0 1rem;font-size:1.05rem;line-height:1.4;color:var(--ink-soft)}
+.sync-card input{display:block;width:100%;font:inherit;font-size:1.4rem;padding:.55em .7em;border:3px solid var(--ink);border-radius:12px;color:var(--ink);background:#fff}
+.sync-card input:focus{outline:3px solid var(--btc-deep);outline-offset:2px}
+.sync-error{min-height:1.4em;margin:.5rem 0 .4rem;color:#C2263A;font-weight:700}
+.sync-actions{display:flex}
+.sync-actions .btn{font-size:1.1rem;padding:.55em 1.1em}
+.sync-actions .btn+.btn{margin-left:12px}
+.btn-go{background:var(--sun)}
 @media print{
   body{overflow:visible}
   .slide{position:relative;opacity:1;visibility:visible;transform:none;page-break-after:always;height:100vh}
@@ -1007,7 +1023,23 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
 
 <!-- controls -->
 <div class="top">
+  <button class="btn sync-btn" id="syncBtn" type="button" aria-haspopup="dialog"><i class="dot" aria-hidden="true"></i><span id="syncLabel">Sync</span></button>
   <button class="btn" id="fsBtn">Full screen</button>
+</div>
+<div class="sync-overlay" id="syncOverlay" hidden>
+  <div class="card sync-card" role="dialog" aria-modal="true" aria-labelledby="syncTitle">
+    <h3 id="syncTitle">Sync this screen</h3>
+    <form id="syncForm" autocomplete="off">
+      <p class="sync-help">Enter the passcode on every screen you want to keep on the same slide.</p>
+      <input id="syncCode" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Passcode" placeholder="Passcode">
+      <p class="sync-error" id="syncError" role="alert"></p>
+      <div class="sync-actions"><button type="submit" class="btn btn-go">Connect</button><button type="button" class="btn" id="syncCancel">Cancel</button></div>
+    </form>
+    <div id="syncOnPanel" hidden>
+      <p class="sync-help">This screen is synced. Changing slides here moves every synced screen, and the other way around.</p>
+      <div class="sync-actions"><button type="button" class="btn" id="syncStop">Stop syncing</button><button type="button" class="btn btn-go" id="syncClose">Done</button></div>
+    </div>
+  </div>
 </div>
 <div class="count" id="count" aria-live="polite"></div>
 <nav class="track" aria-label="Slides">
@@ -1031,7 +1063,8 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
     track.appendChild(b);return b;
   });
 
-  function go(n,fromHash){
+  let onLocalChange=null;
+  function go(n,fromHash,remote){
     n=Math.max(0,Math.min(slides.length-1,n));
     if(n===cur)return;
     slides.forEach((s,k)=>{
@@ -1049,6 +1082,7 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
     document.body.dataset.chapter=slides[n].dataset.chapter;
     count.textContent=(n+1)+' of '+slides.length;
     cur=n;
+    if(!remote&&onLocalChange)onLocalChange(n);
     try{if(document.activeElement&&document.activeElement!==document.body&&document.activeElement.blur)document.activeElement.blur()}catch(err){}
     if(!fromHash){try{history.replaceState(null,'','#'+(n+1))}catch(e){}}
   }
@@ -1066,6 +1100,7 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
   document.getElementById('fsBtn').addEventListener('click',toggleFs);
 
   document.addEventListener('keydown',e=>{
+    if(syncIsOpen()){if(e.key==='Escape'||e.keyCode===27){closeSync()}return}
     if(e.metaKey||e.ctrlKey||e.altKey)return;
     const t=e.target;
     if(t&&t.id==='tableBtn'&&(e.key===' '||e.key==='Enter'))return;
@@ -1083,6 +1118,7 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
   let lastKey=0;
   document.addEventListener('click',e=>{
     const t=e.target;
+    if(t&&t.closest&&t.closest('.sync-overlay'))return;
     if(t&&t.closest&&t.closest('a')){e.preventDefault();return}
     if(Date.now()-lastKey<400)return;
     if(t&&t.closest&&t.closest('button,.top,.track'))return;
@@ -1092,6 +1128,7 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
   document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
   document.addEventListener('touchend',e=>{
     if(tx===null)return;
+    if(syncIsOpen()){tx=null;return}
     const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
     if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4){dx<0?next():prev()}
     tx=null;
@@ -1181,8 +1218,100 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
     tbtn.addEventListener('click',()=>{const open=tbl.hidden;tbl.hidden=!open;tbtn.setAttribute('aria-expanded',String(open));tbtn.textContent=open?'Hide table':'Show as table';svg.style.display=open?'none':'block'});
   })();}catch(err){}
 
+  /* ---------- sync: every screen with the passcode stays on the same slide (relay: ntfy.sh) ---------- */
+  var SYNC_VERIFY='d8b7dbf3403919ccd5c8a45ef91a6cc1600a12c0f79c3806b78c7b6920fb2b5f', SYNC_SALT='btc-deck', RELAY='https://ntfy.sh/';
+  var sync={on:false,topic:null,es:null,me:Math.random().toString(36).slice(2,10),timer:null,pending:0};
+  var syncBtn=document.getElementById('syncBtn'), syncLabel=document.getElementById('syncLabel'),
+      overlay=document.getElementById('syncOverlay'), syncForm=document.getElementById('syncForm'),
+      codeIn=document.getElementById('syncCode'), errEl=document.getElementById('syncError'),
+      onPanel=document.getElementById('syncOnPanel');
+  function sha256(ascii){
+    function rr(v,a){return (v>>>a)|(v<<(32-a))}
+    var mp=Math.pow,mw=mp(2,32),i,j,result='',words=[],bitLen=ascii.length*8,hash=[],k=[],pc=0,isComp={};
+    for(var cand=2;pc<64;cand++){if(!isComp[cand]){for(i=0;i<313;i+=cand){isComp[i]=cand}hash[pc]=(mp(cand,.5)*mw)|0;k[pc++]=(mp(cand,1/3)*mw)|0}}
+    ascii+='\x80';while(ascii.length%64-56)ascii+='\x00';
+    for(i=0;i<ascii.length;i++){j=ascii.charCodeAt(i);if(j>>8)return '';words[i>>2]|=j<<((3-i)%4)*8}
+    words[words.length]=((bitLen/mw)|0);words[words.length]=bitLen;
+    for(j=0;j<words.length;){
+      var w=words.slice(j,j+=16),old=hash;hash=hash.slice(0,8);
+      for(i=0;i<64;i++){
+        var w15=w[i-15],w2=w[i-2],a=hash[0],e=hash[4];
+        var t1=hash[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&hash[5])^((~e)&hash[6]))+k[i]+(w[i]=(i<16)?w[i]:(w[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+w[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);
+        var t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));
+        hash=[(t1+t2)|0].concat(hash);hash[4]=(hash[4]+t1)|0;
+      }
+      for(i=0;i<8;i++){hash[i]=(hash[i]+old[i])|0}
+    }
+    for(i=0;i<8;i++){for(j=3;j+1;j--){var b=(hash[i]>>(j*8))&255;result+=((b<16)?0:'')+b.toString(16)}}
+    return result;
+  }
+  function hashOf(str){return sha256(unescape(encodeURIComponent(str)))}
+  function syncIsOpen(){return !!overlay&&!overlay.hidden}
+  function setStatus(kind,label){syncBtn.className='btn sync-btn'+(kind?' is-'+kind:'');syncLabel.textContent=label}
+  function openSync(){
+    overlay.hidden=false;errEl.textContent='';
+    if(sync.on){syncForm.hidden=true;onPanel.hidden=false;try{document.getElementById('syncClose').focus()}catch(x){}}
+    else{syncForm.hidden=false;onPanel.hidden=true;codeIn.value='';setTimeout(function(){try{codeIn.focus()}catch(x){}},30)}
+  }
+  function closeSync(){overlay.hidden=true;try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}catch(x){}}
+  function remember(c){try{localStorage.setItem('btcDeckSync',c)}catch(x){}}
+  function forget(){try{localStorage.removeItem('btcDeckSync')}catch(x){}}
+  function stopSync(keepCode){
+    sync.on=false;if(sync.es){try{sync.es.close()}catch(x){}}sync.es=null;sync.topic=null;
+    if(!keepCode)forget();setStatus('','Sync');
+  }
+  function send(n){
+    if(!sync.on)return;sync.pending=n;if(sync.timer)return;
+    sync.timer=setTimeout(function(){
+      sync.timer=null;if(!sync.on)return;
+      var body=JSON.stringify({s:sync.pending,from:sync.me,t:Date.now()});
+      fetch(RELAY+sync.topic,{method:'POST',body:body}).then(function(r){
+        if(!sync.on)return;
+        if(r.status===429)setStatus('err','Sync limit reached');
+        else if(!r.ok)setStatus('err','Sync error');
+        else setStatus('on','Synced');
+      }).catch(function(){if(sync.on)setStatus('err','Sync offline')});
+    },150);
+  }
+  onLocalChange=send;
+  function apply(m){
+    var d;try{d=JSON.parse(m.message)}catch(x){return}
+    if(!d||typeof d.s!=='number'||d.from===sync.me)return;
+    go(d.s,false,true);
+  }
+  function listen(since){
+    if(typeof EventSource==='undefined'){setStatus('err','Sync not supported');return}
+    var es=new EventSource(RELAY+sync.topic+'/sse?since='+since);sync.es=es;
+    es.onopen=function(){if(sync.es===es)setStatus('on','Synced')};
+    es.onmessage=function(ev){var m;try{m=JSON.parse(ev.data)}catch(x){return}if(m&&m.event==='message')apply(m)};
+    es.onerror=function(){if(sync.es===es&&sync.on)setStatus('wait','Reconnecting')};
+  }
+  function startSync(raw,quiet){
+    var c=String(raw||'').replace(/^\s+|\s+$/g,'').toLowerCase();
+    if(hashOf(SYNC_SALT+'-verify|'+c)!==SYNC_VERIFY){
+      if(quiet)forget();else{errEl.textContent='That passcode isn’t right. Check it and try again.';try{codeIn.select()}catch(x){}}
+      return false;
+    }
+    stopSync(true);sync.on=true;sync.topic='btcdeck-'+hashOf(SYNC_SALT+'-topic|'+c).slice(0,32);remember(c);setStatus('wait','Connecting');
+    var since=Math.floor(Date.now()/1000);
+    /* join: jump to the slide the other screens are on; if nobody has moved yet, share this screen's slide */
+    fetch(RELAY+sync.topic+'/json?poll=1&since=12h').then(function(r){return r.text()}).then(function(txt){
+      if(!sync.on)return;var last=null;
+      txt.split('\n').forEach(function(l){if(!l)return;try{var m=JSON.parse(l);if(m.event==='message')last=m}catch(x){}});
+      if(last)apply(last);else send(cur);
+    }).catch(function(){}).then(function(){if(sync.on)listen(since)});
+    return true;
+  }
+  syncBtn.addEventListener('click',function(e){e.stopPropagation();openSync()});
+  document.getElementById('syncCancel').addEventListener('click',closeSync);
+  document.getElementById('syncClose').addEventListener('click',closeSync);
+  document.getElementById('syncStop').addEventListener('click',function(){stopSync();closeSync()});
+  overlay.addEventListener('click',function(e){if(e.target===overlay)closeSync()});
+  syncForm.addEventListener('submit',function(e){e.preventDefault();if(startSync(codeIn.value))closeSync()});
+
   const start=parseInt(location.hash.slice(1),10);
-  go(start?start-1:0,true);
+  go(start?start-1:0,true,true);
+  try{var saved=localStorage.getItem('btcDeckSync');if(saved)startSync(saved,true)}catch(x){}
 })();
 </script>
 </body>
