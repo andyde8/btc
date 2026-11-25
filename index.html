@@ -475,6 +475,7 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
 .sync-help{margin:0 0 1rem;font-size:1.05rem;line-height:1.4;color:var(--ink-soft)}
 .sync-card input{display:block;width:100%;font:inherit;font-size:1.4rem;padding:.55em .7em;border:3px solid var(--ink);border-radius:12px;color:var(--ink);background:#fff}
 .sync-card input:focus{outline:3px solid var(--btc-deep);outline-offset:2px}
+.sync-meta{margin:-.4rem 0 1rem;font-size:.95rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
 .sync-error{min-height:1.4em;margin:.5rem 0 .4rem;color:#C2263A;font-weight:700}
 .sync-actions{display:flex}
 .sync-actions .btn{font-size:1.1rem;padding:.55em 1.1em}
@@ -1037,6 +1038,7 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
     </form>
     <div id="syncOnPanel" hidden>
       <p class="sync-help">This screen is synced. Changing slides here moves every synced screen, and the other way around.</p>
+      <p class="sync-meta" id="syncMeta"></p>
       <div class="sync-actions"><button type="button" class="btn" id="syncStop">Stop syncing</button><button type="button" class="btn btn-go" id="syncClose">Done</button></div>
     </div>
   </div>
@@ -1220,7 +1222,8 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
 
   /* ---------- sync: every screen with the passcode stays on the same slide (relay: ntfy.sh) ---------- */
   var SYNC_VERIFY='d8b7dbf3403919ccd5c8a45ef91a6cc1600a12c0f79c3806b78c7b6920fb2b5f', SYNC_SALT='btc-deck', RELAY='https://ntfy.sh/';
-  var sync={on:false,topic:null,es:null,me:Math.random().toString(36).slice(2,10),timer:null,pending:0};
+  var sync={on:false,topic:null,es:null,ws:null,me:Math.random().toString(36).slice(2,10),timer:null,pending:0};
+  var seen={}, lastTime=0, lastData=0, lastRecv=0, transport='', wsFails=0, pollTimer=null, metaTimer=null;
   var syncBtn=document.getElementById('syncBtn'), syncLabel=document.getElementById('syncLabel'),
       overlay=document.getElementById('syncOverlay'), syncForm=document.getElementById('syncForm'),
       codeIn=document.getElementById('syncCode'), errEl=document.getElementById('syncError'),
@@ -1250,14 +1253,25 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
   function setStatus(kind,label){syncBtn.className='btn sync-btn'+(kind?' is-'+kind:'');syncLabel.textContent=label}
   function openSync(){
     overlay.hidden=false;errEl.textContent='';
-    if(sync.on){syncForm.hidden=true;onPanel.hidden=false;try{document.getElementById('syncClose').focus()}catch(x){}}
+    if(sync.on){syncForm.hidden=true;onPanel.hidden=false;showMeta();if(!metaTimer)metaTimer=setInterval(showMeta,1000);try{document.getElementById('syncClose').focus()}catch(x){}}
     else{syncForm.hidden=false;onPanel.hidden=true;codeIn.value='';setTimeout(function(){try{codeIn.focus()}catch(x){}},30)}
   }
-  function closeSync(){overlay.hidden=true;try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}catch(x){}}
+  function showMeta(){
+    var el=document.getElementById('syncMeta');if(!el)return;
+    var how=transport==='live'?'Live connection':transport==='backup'?'Backup mode (checks every 10 seconds)':'Connecting…';
+    var last=lastRecv?Math.round((Date.now()-lastRecv)/1000)+' s ago':'nothing yet';
+    el.textContent=how+'. Last change from another screen: '+last+'.';
+  }
+  function closeSync(){if(metaTimer){clearInterval(metaTimer);metaTimer=null}overlay.hidden=true;try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}catch(x){}}
   function remember(c){try{localStorage.setItem('btcDeckSync',c)}catch(x){}}
   function forget(){try{localStorage.removeItem('btcDeckSync')}catch(x){}}
+  function closeStreams(){
+    if(sync.ws){try{sync.ws.onclose=null;sync.ws.close()}catch(x){}}sync.ws=null;
+    if(sync.es){try{sync.es.close()}catch(x){}}sync.es=null;
+    if(pollTimer){clearInterval(pollTimer);pollTimer=null}
+  }
   function stopSync(keepCode){
-    sync.on=false;if(sync.es){try{sync.es.close()}catch(x){}}sync.es=null;sync.topic=null;
+    sync.on=false;closeStreams();sync.topic=null;transport='';
     if(!keepCode)forget();setStatus('','Sync');
   }
   function send(n){
@@ -1274,18 +1288,58 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
     },150);
   }
   onLocalChange=send;
+  function handle(m){
+    if(!m||m.event!=='message')return;
+    if(m.id){if(seen[m.id])return;seen[m.id]=1}
+    if(m.time&&m.time>lastTime)lastTime=m.time;
+    apply(m);
+  }
+  function markAlive(kind){lastData=Date.now();transport=kind;if(sync.on)setStatus('on','Synced')}
   function apply(m){
     var d;try{d=JSON.parse(m.message)}catch(x){return}
     if(!d||typeof d.s!=='number'||d.from===sync.me)return;
+    lastRecv=Date.now();
     go(d.s,false,true);
   }
-  function listen(since){
-    if(typeof EventSource==='undefined'){setStatus('err','Sync not supported');return}
-    var es=new EventSource(RELAY+sync.topic+'/sse?since='+since);sync.es=es;
-    es.onopen=function(){if(sync.es===es)setStatus('on','Synced')};
-    es.onmessage=function(ev){var m;try{m=JSON.parse(ev.data)}catch(x){return}if(m&&m.event==='message')apply(m)};
+  function listen(){
+    closeStreams();if(!sync.on)return;
+    var since=lastTime?lastTime:Math.floor(Date.now()/1000);
+    if(typeof WebSocket!=='undefined'&&wsFails<2)openWs(since);
+    else if(typeof EventSource!=='undefined'&&wsFails<4)openSse(since);
+    else startPolling();
+  }
+  function openWs(since){
+    var ws,opened=false;
+    try{ws=new WebSocket('wss://ntfy.sh/'+sync.topic+'/ws?since='+since)}catch(x){wsFails=2;listen();return}
+    sync.ws=ws;
+    var to=setTimeout(function(){if(!opened&&sync.ws===ws){wsFails++;listen()}},6000);
+    ws.onopen=function(){opened=true;clearTimeout(to);wsFails=0;markAlive('live')};
+    ws.onmessage=function(ev){var m;try{m=JSON.parse(ev.data)}catch(x){return}markAlive('live');handle(m)};
+    ws.onclose=function(){
+      clearTimeout(to);if(sync.ws!==ws||!sync.on)return;sync.ws=null;if(!opened)wsFails++;
+      setStatus('wait','Reconnecting');setTimeout(function(){if(sync.on&&!sync.ws&&!sync.es&&!pollTimer)listen()},1500);
+    };
+  }
+  function openSse(since){
+    var es=new EventSource(RELAY+sync.topic+'/sse?since='+since),opened=false;sync.es=es;
+    var to=setTimeout(function(){if(!opened&&sync.es===es){try{es.close()}catch(x){}sync.es=null;wsFails=4;startPolling()}},6000);
+    es.onopen=function(){opened=true;clearTimeout(to);markAlive('live')};
+    es.onmessage=function(ev){var m;try{m=JSON.parse(ev.data)}catch(x){return}markAlive('live');handle(m)};
     es.onerror=function(){if(sync.es===es&&sync.on)setStatus('wait','Reconnecting')};
   }
+  function pollOnce(){
+    return fetch(RELAY+sync.topic+'/json?poll=1&since='+(lastTime?lastTime:'12h')).then(function(r){
+      if(r.status===429)throw new Error('limit');return r.text();
+    }).then(function(txt){txt.split('\n').forEach(function(l){if(!l)return;try{handle(JSON.parse(l))}catch(x){}})});
+  }
+  function startPolling(){
+    closeStreams();transport='backup';
+    pollTimer=setInterval(function(){if(!sync.on)return;pollOnce().then(function(){markAlive('backup')}).catch(function(){setStatus('err','Sync offline')})},10000);
+    if(sync.on)setStatus('on','Synced');
+  }
+  /* watchdog: live streams get a keepalive at least every ~45 s; a silent one is reconnected */
+  setInterval(function(){if(sync.on&&transport==='live'&&Date.now()-lastData>75000){setStatus('wait','Reconnecting');listen()}},15000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&sync.on)pollOnce().catch(function(){})});
   function startSync(raw,quiet){
     var c=String(raw||'').replace(/^\s+|\s+$/g,'').toLowerCase();
     if(hashOf(SYNC_SALT+'-verify|'+c)!==SYNC_VERIFY){
@@ -1293,13 +1347,14 @@ h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
       return false;
     }
     stopSync(true);sync.on=true;sync.topic='btcdeck-'+hashOf(SYNC_SALT+'-topic|'+c).slice(0,32);remember(c);setStatus('wait','Connecting');
-    var since=Math.floor(Date.now()/1000);
+    seen={};lastTime=0;lastRecv=0;wsFails=0;
     /* join: jump to the slide the other screens are on; if nobody has moved yet, share this screen's slide */
     fetch(RELAY+sync.topic+'/json?poll=1&since=12h').then(function(r){return r.text()}).then(function(txt){
-      if(!sync.on)return;var last=null;
-      txt.split('\n').forEach(function(l){if(!l)return;try{var m=JSON.parse(l);if(m.event==='message')last=m}catch(x){}});
-      if(last)apply(last);else send(cur);
-    }).catch(function(){}).then(function(){if(sync.on)listen(since)});
+      if(!sync.on)return;var msgs=[];
+      txt.split('\n').forEach(function(l){if(!l)return;try{var m=JSON.parse(l);if(m.event==='message')msgs.push(m)}catch(x){}});
+      if(msgs.length){for(var i=0;i<msgs.length-1;i++){seen[msgs[i].id]=1;if(msgs[i].time>lastTime)lastTime=msgs[i].time}handle(msgs[msgs.length-1])}
+      else{lastTime=Math.floor(Date.now()/1000);send(cur)}
+    }).catch(function(){}).then(function(){if(sync.on)listen()});
     return true;
   }
   syncBtn.addEventListener('click',function(e){e.stopPropagation();openSync()});
