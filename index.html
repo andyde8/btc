@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The Relevance of Bitcoin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1E1A4D;
+  --ink-soft:#4E4A7E;
+  --paper:#FFFFFF;
+  --lilac:#D8D1FF;
+  --sky:#BDE3FF;
+  --mint:#BFEFD3;
+  --rose:#FFC9CF;
+  --sun:#FFE48A;
+  --night:#221D57;
+  --btc:#F7931A;
+  --btc-deep:#D06A00;
+  --red:#E4485A;
+  --green:#1E9A57;
+  --cash:#9BE3A8;
+  --skin:#FFD7B5;
+  --bg:var(--lilac);
+  --text:var(--ink);
+  --shadow:var(--ink);
+  --hand:'Patrick Hand','Comic Sans MS','Chalkboard SE',cursive;
+  --sans:'Bricolage Grotesque',ui-rounded,'SF Pro Rounded',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+body[data-chapter="ai"]{--bg:var(--sky)}
+body[data-chapter="gov"]{--bg:var(--mint)}
+body[data-chapter="markets"]{--bg:var(--rose)}
+body[data-chapter="money"]{--bg:var(--sun)}
+body[data-chapter="btc"]{--bg:var(--night);--text:#FFFFFF;--shadow:var(--btc)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-optical-sizing:auto;
+  transition:background-color .6s ease,color .6s ease;
+  overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+/* faint comic-paper dots */
+body::before{
+  content:"";position:fixed;top:0;right:0;bottom:0;left:0;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(30,26,77,.09) 1.2px,transparent 1.4px);
+  background-size:22px 22px;
+}
+body[data-chapter="btc"]::before{background-image:radial-gradient(rgba(255,255,255,.07) 1.2px,transparent 1.4px)}
+
+/* ---------- slides ---------- */
+.deck{position:fixed;top:0;right:0;bottom:0;left:0;inset:0}
+.slide{
+  position:absolute;top:0;right:0;bottom:0;left:0;inset:0;
+  display:grid;place-items:center;place-items:safe center;overflow-y:auto;
+  padding:7vh 5vw 13vh;padding:clamp(56px,7vh,84px) clamp(16px,5vw,88px) clamp(96px,13vh,120px);
+  opacity:0;visibility:hidden;transform:translateX(48px);
+  transition:opacity .45s ease,transform .5s cubic-bezier(.2,.8,.2,1),visibility 0s linear .5s;
+}
+.slide.is-active{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.slide.is-past{transform:translateX(-48px)}
+.inner{width:100%;width:min(1180px,100%);display:grid;gap:3.5vw;gap:clamp(20px,3.5vw,56px);align-items:center}
+.split{grid-template-columns:1.05fr .95fr}
+.split.art-left{grid-template-columns:.95fr 1.05fr}
+.split.chart-split{grid-template-columns:.8fr 1.2fr}
+.stack{grid-template-columns:1fr}
+.copy{min-width:0}
+.art{min-width:0;display:grid;place-items:center}
+.art svg{width:100%;height:auto;max-height:58vh;max-height:min(58vh,520px);overflow:visible}
+.scrawl-art{justify-self:start;margin-top:1.5vh;margin-top:clamp(6px,1.5vh,14px)}
+.art-card{padding:2vw;padding:clamp(12px,2vw,24px)}
+.art-card svg{max-height:48vh;max-height:min(48vh,440px)}
+
+h1,h2{margin:0;font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+h1{font-size:6.4rem;font-size:clamp(2.6rem,min(6.6vw,11vh),6.4rem);line-height:.94}
+h2{font-size:3.9rem;font-size:clamp(1.9rem,min(4.3vw,7.4vh),3.9rem);line-height:1.0}
+.lede{font-size:1.6rem;font-size:clamp(1.08rem,min(1.75vw,3vh),1.6rem);line-height:1.4;margin:.7em 0 0;max-width:36ch;text-wrap:pretty}
+.lede + .lede{margin-top:.55em}
+.small{font-size:1.1rem;font-size:clamp(.92rem,min(1.25vw,2.2vh),1.1rem);line-height:1.45}
+.muted{color:var(--ink-soft)}
+body[data-chapter="btc"] .muted{color:#C9C5F2}
+.center{text-align:center}
+.center .lede{margin-left:auto;margin-right:auto}
+
+.chip{
+  display:inline-flex;align-items:center;gap:.55em;margin-bottom:1rem;
+  font-weight:700;font-size:1.05rem;font-size:clamp(.88rem,min(1.2vw,2vh),1.05rem);
+  background:#fff;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;
+  padding:.28em .95em .28em .45em;
+}
+.chip i{display:inline-block;width:.62em;height:1.2em;border:2.5px solid var(--ink);border-radius:3px;background:var(--btc-deep);background:var(--ink)}
+body[data-chapter="btc"] .chip i{background:var(--btc)}
+
+.hand{font-family:var(--hand);font-size:1.85rem;font-size:clamp(1.15rem,min(2vw,3.4vh),1.85rem);line-height:1.15}
+
+/* cartoon cards */
+.card{
+  background:#fff;color:var(--ink);border:3px solid var(--ink);border-radius:22px;
+  box-shadow:7px 7px 0 var(--shadow);padding:2vw;padding:clamp(14px,2vw,26px);
+}
+.btn{
+  font:inherit;font-weight:700;font-size:.95rem;color:var(--ink);background:#fff;
+  border:2.5px solid var(--ink);border-radius:12px;padding:.45em .9em;cursor:pointer;
+  box-shadow:3px 3px 0 var(--ink);transition:transform .08s,box-shadow .08s;
+}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.btn[aria-pressed="true"]{background:var(--sun)}
+:focus-visible{outline:3px solid var(--btc-deep);outline-offset:3px;border-radius:8px}
+
+/* ---------- title ---------- */
+.title-copy .lede{max-width:30ch}
+.scribble{position:relative;display:inline-block;transform:rotate(-4deg)}
+
+/* ---------- where this comes from ---------- */
+.origin p strong{font-weight:800}
+
+/* ---------- chain map ---------- */
+.chain{list-style:none;margin:4vh 0 0;margin:clamp(18px,4vh,40px) 0 0;padding:0;display:grid;grid-template-columns:repeat(7,1fr);gap:1.4vw;gap:clamp(8px,1.4vw,18px)}
+.chain li{display:flex;flex-direction:column;align-items:center;gap:.7rem;text-align:center}
+.tile{
+  width:100%;aspect-ratio:1/1.55;background:#fff;border:3px solid var(--ink);border-radius:16px;
+  box-shadow:5px 5px 0 var(--ink);display:grid;place-items:center;padding:8%;
+}
+.tile svg{width:100%;height:auto}
+.chain li:last-child .tile{background:var(--btc)}
+.chain span{font-weight:700;font-size:1.15rem;font-size:clamp(.85rem,min(1.3vw,2.2vh),1.15rem);line-height:1.15}
+
+/* ---------- human vs AI ---------- */
+.versus{display:grid;grid-template-columns:1fr 1fr;gap:2.4vw;gap:clamp(14px,2.4vw,32px);margin-top:3vh;margin-top:clamp(14px,3vh,30px)}
+.who{display:flex;align-items:center;gap:.8rem;margin-bottom:.4rem}
+.who svg{width:8vw;width:clamp(60px,8vw,110px);height:auto;flex:none}
+.who h3{margin:0;font-size:2rem;font-size:clamp(1.25rem,min(2.2vw,3.6vh),2rem);font-weight:800}
+.rows{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.5rem 1rem;font-size:1.5rem;font-size:clamp(1rem,min(1.7vw,2.9vh),1.5rem)}
+.rows dt{color:var(--ink-soft)}
+.rows dd{margin:0;font-weight:700;text-align:right}
+.versus .ai{background:#F2FAFF}
+
+/* ---------- stat stickers ---------- */
+.stickers{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4vw;gap:clamp(14px,2.4vw,30px);margin-top:3.5vh;margin-top:clamp(16px,3.5vh,34px);align-items:start}
+.sticker{transform:rotate(var(--tilt,0deg))}
+.sticker b{display:block;font-size:4.2rem;font-size:clamp(2.1rem,min(4.6vw,7.6vh),4.2rem);font-weight:800;line-height:1;letter-spacing:-.03em}
+.sticker p{margin:.45em 0 0;font-size:1.3rem;font-size:clamp(.98rem,min(1.45vw,2.5vh),1.3rem);line-height:1.3}
+.scrawl{margin:2.4vh 0 0;margin:clamp(12px,2.4vh,20px) 0 0;max-width:40ch;transform:rotate(-1deg)}
+.quote{margin:3.6vh 0 0;margin:clamp(18px,3.6vh,34px) 0 0;max-width:none}
+.quote span{display:block;font-family:var(--sans);font-size:1rem;font-size:clamp(.85rem,min(1.1vw,1.9vh),1rem);color:var(--ink-soft);margin-top:.25em}
+.sticker small{display:block;margin-top:.7em;color:var(--ink-soft);font-size:.92rem;font-size:clamp(.78rem,min(1vw,1.8vh),.92rem);line-height:1.3}
+
+/* ---------- name tags ---------- */
+.tags{display:flex;flex-wrap:wrap;gap:12px 14px;margin-top:3vh;margin-top:clamp(14px,3vh,28px)}
+.tag{
+  background:#fff;border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);
+  overflow:hidden;min-width:10.5em;transform:rotate(var(--tilt,0deg));color:var(--ink)
+}
+.tag span{display:block;background:var(--red);color:#fff;font-weight:800;font-size:.85rem;padding:.25em .8em}
+.tag b{display:block;font-family:var(--hand);font-weight:400;font-size:1.55rem;font-size:clamp(1.15rem,min(1.8vw,3vh),1.55rem);padding:.25em .8em .35em}
+
+/* ---------- receipt ---------- */
+.receipt-wrap{filter:drop-shadow(3px 0 0 var(--ink)) drop-shadow(-3px 0 0 var(--ink)) drop-shadow(0 3px 0 var(--ink)) drop-shadow(0 -3px 0 var(--ink)) drop-shadow(7px 7px 0 var(--ink));width:100%;width:min(440px,100%);justify-self:center;transform:rotate(1.5deg)}
+.receipt{
+  background:#fff;color:var(--ink);padding:26px 28px 44px;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),95% 100%,90% calc(100% - 14px),85% 100%,80% calc(100% - 14px),75% 100%,70% calc(100% - 14px),65% 100%,60% calc(100% - 14px),55% 100%,50% calc(100% - 14px),45% 100%,40% calc(100% - 14px),35% 100%,30% calc(100% - 14px),25% 100%,20% calc(100% - 14px),15% 100%,10% calc(100% - 14px),5% 100%,0 calc(100% - 14px));
+}
+.receipt h3{margin:0 0 .2em;font-family:var(--hand);font-weight:400;font-size:1.7rem;text-align:center}
+.receipt .rule{border-top:3px dotted var(--ink);margin:.7em 0}
+.line-item{display:grid;grid-template-columns:1fr auto;gap:.2rem 1rem;align-items:baseline;padding:.45em 0}
+.line-item span{font-size:1.2rem;font-size:clamp(.95rem,min(1.35vw,2.4vh),1.2rem);line-height:1.3}
+.line-item b{font-size:2.1rem;font-size:clamp(1.3rem,min(2.3vw,3.9vh),2.1rem);font-weight:800;white-space:nowrap}
+.line-item small{grid-column:1/-1;color:var(--ink-soft);font-size:.85rem}
+
+/* ---------- basics ---------- */
+.basics{display:grid;grid-template-columns:repeat(3,1fr);gap:2vw;gap:clamp(12px,2vw,28px);margin-top:4vh;margin-top:clamp(18px,4vh,36px)}
+.basic{text-align:center}
+.basic svg{width:100%;width:min(100%,180px);height:auto}
+.basic b{display:block;margin-top:.4rem;font-size:1.7rem;font-size:clamp(1.1rem,min(1.9vw,3.2vh),1.7rem);font-weight:800}
+
+/* ---------- exposure list ---------- */
+.exposure{list-style:none;margin:3vh 0 0;margin:clamp(14px,3vh,28px) 0 0;padding:0;display:grid;gap:12px}
+.exposure li{display:grid;grid-template-columns:auto 1fr;gap:.25rem 1rem;align-items:center;padding:12px 16px}
+.meter{display:flex;gap:4px}
+.meter i{width:16px;height:26px;border:2.5px solid var(--ink);border-radius:4px;background:#fff}
+.meter i.on{background:var(--red)}
+.exposure b{font-size:1.4rem;font-size:clamp(1.02rem,min(1.6vw,2.7vh),1.4rem);font-weight:800}
+.exposure p{grid-column:2;margin:0;font-size:1.1rem;font-size:clamp(.9rem,min(1.25vw,2.2vh),1.1rem);line-height:1.35;color:var(--ink-soft)}
+
+/* ---------- crash chips ---------- */
+.crashes{display:flex;flex-wrap:wrap;gap:12px;margin-top:3vh;margin-top:clamp(14px,3vh,26px)}
+.crash{padding:10px 16px 12px;border-radius:16px}
+.crash b{display:block;font-size:2.6rem;font-size:clamp(1.6rem,min(2.8vw,4.6vh),2.6rem);font-weight:800;line-height:1;color:var(--red)}
+.crash-note{margin:.8rem 0 0}
+body[data-chapter="markets"] .muted{color:#5A3A4E}
+.crash span{font-size:1rem;font-size:clamp(.85rem,min(1.15vw,2vh),1rem)}
+
+/* ---------- two panels ---------- */
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:2.6vw;gap:clamp(14px,2.6vw,34px);margin-top:3vh;margin-top:clamp(14px,3vh,30px)}
+.panel{display:grid;grid-template-rows:auto 1fr;gap:.6rem}
+.panel svg{width:100%;height:auto;max-height:26vh;max-height:min(26vh,230px)}
+.panel h3{margin:0;font-size:1.8rem;font-size:clamp(1.2rem,min(2vw,3.4vh),1.8rem);font-weight:800;line-height:1.1}
+.panel p{margin:.4em 0 0;font-size:1.2rem;font-size:clamp(.95rem,min(1.35vw,2.4vh),1.2rem);line-height:1.38}
+
+/* ---------- printer stats ---------- */
+.mini-stats{display:grid;grid-template-columns:auto 1fr;gap:12px 0;margin-top:3vh;margin-top:clamp(14px,3vh,26px)}
+.mini{grid-column:1/-1;display:grid;grid-template-columns:subgrid;column-gap:1.1rem;align-items:center;padding:12px 18px;border-radius:16px}
+.mini b{font-size:2.4rem;font-size:clamp(1.5rem,min(2.6vw,4.3vh),2.4rem);font-weight:800;line-height:1;letter-spacing:-.02em}
+.mini span{font-size:1.15rem;font-size:clamp(.92rem,min(1.3vw,2.3vh),1.15rem);line-height:1.35}
+
+/* ---------- scoreboard ---------- */
+.score{width:100%;border-collapse:separate;border-spacing:0;margin-top:3vh;margin-top:clamp(14px,3vh,28px);font-size:1.25rem;font-size:clamp(.92rem,min(1.4vw,2.4vh),1.25rem)}
+.score th,.score td{padding:.62em .8em;text-align:left;vertical-align:middle;border-bottom:2.5px solid var(--ink)}
+.score thead th{font-size:.9em;font-weight:700;color:var(--ink-soft);border-bottom:3px solid var(--ink)}
+.score tbody th{font-weight:800}
+.score tr:last-child th,.score tr:last-child td{border-bottom:0}
+.score .btc-row th,.score .btc-row td{background:#FFF1DE}
+.score .btc-row th:first-child{border-radius:0 0 0 14px}
+.score .btc-row td:last-child{border-radius:0 0 14px 0}
+.mark{display:inline-flex;align-items:center;gap:.45em;font-weight:600}
+.mark svg{width:1.25em;height:1.25em;flex:none}
+.score-card{padding:6px 6px 2px}
+
+/* ---------- supply chart ---------- */
+.chart-card{position:relative;padding:2vw 1.6vw 10px;padding:clamp(14px,2vw,22px) clamp(10px,1.6vw,20px) 10px}
+.chart-card h3{margin:0 0 .3rem .4rem;font-size:1.25rem;font-size:clamp(1rem,min(1.5vw,2.6vh),1.25rem);font-weight:800}
+.chart-card svg{width:100%;height:auto;max-height:46vh;max-height:min(46vh,400px);display:block;touch-action:pan-y}
+.axis text{font-family:var(--sans);font-size:16px;fill:var(--ink-soft);font-variant-numeric:tabular-nums}
+.grid line{stroke:#E5E3F0;stroke-width:1}
+.tip{
+  position:absolute;pointer-events:none;background:var(--ink);color:#fff;border-radius:10px;
+  padding:.4em .7em;font-size:.95rem;line-height:1.25;white-space:nowrap;transform:translate(-50%,-115%);
+  opacity:0;transition:opacity .12s;
+}
+.tip b{display:block;font-size:1.05rem}
+.table-toggle{margin:.4rem 0 0 .4rem}
+.data-table{margin:.5rem .4rem 0;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+.data-table th,.data-table td{padding:.2em .9em .2em 0;text-align:left}
+
+/* ---------- can / can't ---------- */
+.cancant{display:grid;grid-template-columns:1fr 1fr;gap:2.6vw;gap:clamp(14px,2.6vw,34px);margin-top:2.2vh;margin-top:clamp(10px,2.2vh,26px)}
+.cancant h3{display:flex;align-items:center;gap:.5rem;margin:0 0 .6rem;font-size:1.7rem;font-size:clamp(1.15rem,min(2vw,3.3vh),1.7rem);font-weight:800}
+.cancant h3 svg{width:1.4em;height:1.4em}
+.cancant ul{margin:0;padding-left:1.15em;display:grid;gap:.5em;font-size:1.25rem;font-size:clamp(.98rem,min(1.4vw,2.45vh),1.25rem);line-height:1.35}
+.footnote{margin:2.2vh 0 0;margin:clamp(10px,2.2vh,24px) 0 0;font-size:1.15rem;font-size:clamp(.92rem,min(1.3vw,2.3vh),1.15rem);line-height:1.4;max-width:62ch}
+.footnote strong{color:var(--btc)}
+
+/* ---------- punchline ---------- */
+.punch h2{font-size:5.2rem;font-size:clamp(2.2rem,min(5.4vw,9vh),5.2rem);line-height:.98}
+.big21{font-size:8.6rem;font-size:clamp(3.2rem,min(9vw,15vh),8.6rem);font-weight:800;letter-spacing:-.04em;line-height:.9;color:var(--btc);margin:.15em 0 .05em}
+.glow{animation:glow 2.6s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:.35}50%{opacity:.75}}
+
+/* ---------- sources ---------- */
+.sources{columns:3;column-gap:32px;margin:2.6vh 0 0;margin:clamp(12px,2.6vh,24px) 0 0;padding-left:1.2em;font-size:.95rem;font-size:clamp(.78rem,min(1.02vw,1.85vh),.95rem);line-height:1.38}
+.sources li{break-inside:avoid;margin-bottom:.45em}
+.sources a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:2px}
+
+/* ---------- svg drawing kit ---------- */
+.o{stroke:var(--ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.o3{stroke:var(--ink);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.w{fill:#fff}.k{fill:var(--ink)}.b{fill:var(--btc)}.bd{fill:var(--btc-deep)}.s{fill:#9ED4FF}.m{fill:#8EE0B0}.r{fill:var(--red)}.y{fill:var(--sun)}.n{fill:none}.g{fill:#ECEAF6}.c{fill:var(--cash)}.sk{fill:var(--skin)}.l{fill:var(--lilac)}.rs{fill:#FFB3BC}
+.htext{font-family:var(--hand);fill:var(--ink)}
+.stext{font-family:var(--sans);font-weight:800;fill:var(--ink)}
+.pop{filter:url(#hard)}
+body[data-chapter="btc"] .pop{filter:url(#hardO)}
+.on-dark .o,.on-dark .o3{stroke:var(--ink)}
+
+/* title domino fall: one orchestrated moment */
+.fall{transform-origin:0 0;transform:rotate(var(--a));animation:fall .5s cubic-bezier(.6,0,.85,.45) var(--d) both}
+@keyframes fall{from{transform:rotate(0deg)}to{transform:rotate(var(--a))}}
+.settle{transform-box:fill-box;transform-origin:50% 100%;animation:settle .5s ease-out 1.55s both}
+@keyframes settle{0%{transform:rotate(0)}35%{transform:rotate(-5deg)}70%{transform:rotate(2deg)}100%{transform:rotate(0)}}
+
+/* ---------- chrome: top controls, domino track, notes ---------- */
+.top{position:fixed;top:14px;right:16px;display:flex;gap:10px;z-index:5}
+.track{
+  position:fixed;left:50%;bottom:2.6vh;bottom:clamp(14px,2.6vh,24px);transform:translateX(-50%);z-index:5;
+  display:flex;align-items:flex-end;gap:12px;
+}
+.dominoes{display:flex;align-items:flex-end;gap:7px;padding:0 6px;height:34px}
+.dom{
+  appearance:none;padding:0;cursor:pointer;width:14px;height:30px;
+  background:#fff;border:2.5px solid var(--ink);border-radius:4px;
+  transform-origin:100% 100%;transition:transform .5s cubic-bezier(.5,-.35,.55,1.35),background-color .3s;
+  position:relative;
+}
+.dom::after{content:"";position:absolute;left:1px;right:1px;top:50%;border-top:2px solid var(--ink);opacity:.5}
+.dom.down{transform:rotate(58deg)}
+.dom.current{background:var(--ink)}
+.dom.current::after{border-color:#fff}
+body[data-chapter="btc"] .dom{border-color:#fff}
+body[data-chapter="btc"] .dom.current{background:var(--btc)}
+body[data-chapter="btc"] .btn{box-shadow:3px 3px 0 var(--btc)}
+.navbtn{width:44px;height:44px;border-radius:50%;padding:0;display:grid;place-items:center}
+.navbtn svg{width:20px;height:20px}
+.count{position:fixed;left:18px;bottom:3vh;bottom:clamp(18px,3vh,28px);font-weight:700;font-size:.95rem;z-index:5;font-variant-numeric:tabular-nums}
+.notes{display:none}
+#notesPanel{
+  position:fixed;right:16px;bottom:84px;z-index:6;width:calc(100vw - 32px);width:min(420px,calc(100vw - 32px));max-height:52vh;overflow:auto;
+  font-size:1rem;line-height:1.45;display:none;
+}
+#notesPanel.open{display:block}
+#notesPanel h4{margin:0 0 .4rem;font-size:.95rem;color:var(--ink-soft);font-weight:700}
+#notesPanel ul{margin:0;padding-left:1.1em;display:grid;gap:.4em}
+.keyhint{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;font-size:.9rem;opacity:.75;z-index:4;white-space:nowrap}
+
+
+/* ---------- v2: one idea per slide ---------- */
+h2{font-size:4.6rem;font-size:clamp(2.1rem,min(4.9vw,8.4vh),4.6rem);line-height:.98}
+h1{font-size:5.8rem;font-size:clamp(2.6rem,min(5.8vw,10vh),5.8rem)}
+.lede.big{font-size:1.95rem;font-size:clamp(1.2rem,min(2.1vw,3.6vh),1.95rem);line-height:1.3;max-width:24ch;margin-top:.6em}
+.center .lede.big{max-width:34ch}
+.title-copy .lede.big{max-width:none}
+.side-sticker{display:inline-block;margin-top:3.6vh;margin-top:clamp(18px,3.6vh,36px);transform:rotate(-2deg);padding:14px 22px 16px}
+.side-sticker b{display:block;font-size:4.4rem;font-size:clamp(2.4rem,min(5vw,8.5vh),4.4rem);font-weight:800;line-height:1;letter-spacing:-.03em}
+.side-sticker span{display:block;font-size:1.3rem;font-size:clamp(1rem,min(1.5vw,2.6vh),1.3rem);margin-top:.35em;max-width:18ch;line-height:1.25}
+.side-sticker small{display:block;margin-top:.55em;font-size:.82rem;color:var(--ink-soft)}
+.duo{display:grid;grid-template-columns:1fr auto 1fr;gap:2.4vw;gap:clamp(12px,2.4vw,32px);align-items:center;margin-top:4.5vh;margin-top:clamp(20px,4.5vh,44px);max-width:900px;margin-left:auto;margin-right:auto;width:100%}
+.duo .card{display:flex;align-items:center;gap:1.6vw;gap:clamp(10px,1.6vw,22px)}
+.duo svg{width:9vw;width:clamp(70px,9vw,124px);height:auto;flex:none}
+.duo b{display:block;font-size:4.8rem;font-size:clamp(2.6rem,min(5.4vw,9vh),4.8rem);font-weight:800;line-height:.95;letter-spacing:-.03em}
+.duo span{font-size:1.35rem;font-size:clamp(1rem,min(1.6vw,2.7vh),1.35rem)}
+.duo .vs{font-family:var(--hand);font-size:3.2rem;font-size:clamp(2rem,3.6vw,3.2rem)}
+.fred-card{width:100%;width:min(480px,100%);padding:0;overflow:hidden;transform:rotate(2deg)}
+.fred-top{background:var(--sun);border-bottom:3px solid var(--ink);padding:2.4vh 24px;padding:clamp(16px,2.4vh,24px) 24px;display:flex;align-items:center;gap:18px}
+.mono{width:80px;height:80px;width:7vw;width:clamp(64px,7vw,88px);height:7vw;height:clamp(64px,7vw,88px);border-radius:50%;background:var(--btc);border:3px solid var(--ink);display:grid;place-items:center;font-weight:800;font-size:2.2rem;font-size:clamp(1.5rem,2.4vw,2.2rem);color:#fff;flex:none;box-shadow:4px 4px 0 var(--ink)}
+.fred-top h3{margin:0;font-size:2.4rem;font-size:clamp(1.6rem,min(2.8vw,4.6vh),2.4rem);font-weight:800;line-height:1;letter-spacing:-.02em}
+.fred-top p{margin:.2em 0 0;font-family:var(--hand);font-size:1.5rem;font-size:clamp(1.15rem,1.8vw,1.5rem)}
+.creds{list-style:none;margin:0;padding:2vh 24px 2.6vh;padding:clamp(12px,2vh,20px) 24px clamp(16px,2.6vh,24px);display:grid;gap:1.6vh;gap:clamp(8px,1.6vh,14px)}
+.creds li{display:flex;align-items:center;gap:14px;font-size:1.35rem;font-size:clamp(1.02rem,min(1.6vw,2.7vh),1.35rem);font-weight:700;line-height:1.2}
+.creds svg{width:2.8vw;width:clamp(28px,2.8vw,36px);height:auto;flex:none}
+.verdicts{max-width:820px;width:100%;margin:3.6vh auto 0;margin:clamp(16px,3.6vh,34px) auto 0;padding:6px}
+.verdict{display:grid;grid-template-columns:minmax(5.5em,7.5em) 1fr;align-items:center;gap:1rem;padding:1.8vh 18px;padding:clamp(10px,1.8vh,16px) 18px;border-bottom:2.5px solid var(--ink);font-size:1.7rem;font-size:clamp(1.1rem,min(2vw,3.4vh),1.7rem)}
+.verdict:last-child{border-bottom:0}
+.verdict.btc{background:#FFF1DE;border-radius:0 0 16px 16px}
+.vname{font-weight:800}
+.verdict .mark{font-weight:700}
+.verdict .mark svg{width:1.15em;height:1.15em}
+.panels .panel{grid-template-rows:1fr auto;text-align:center}
+.panels .panel h3{font-size:2.1rem;font-size:clamp(1.3rem,min(2.4vw,4vh),2.1rem)}
+.panels .panel svg{max-height:32vh;max-height:min(32vh,280px)}
+.fred-lede{font-size:2.7rem;font-size:clamp(1.5rem,min(3vw,5vh),2.7rem);line-height:1.28;font-weight:400;max-width:20ch;margin:0}
+.sticker-row{display:flex;flex-wrap:wrap;gap:2vw;gap:clamp(14px,2vw,24px);align-items:flex-start;margin-top:3.6vh;margin-top:clamp(18px,3.6vh,36px)}
+.sticker-row .side-sticker{margin-top:0;flex:1 1 0;min-width:12em}
+.sticker-row .side-sticker b{font-size:3.6rem;font-size:clamp(2.2rem,min(4vw,6.8vh),3.6rem)}
+.sticker-row .side-sticker span{max-width:none}
+.side-sticker.tilt-r{transform:rotate(2deg);margin-top:1.6vh;margin-top:clamp(8px,1.6vh,16px)}
+.goldvs-card{max-width:940px;width:100%;margin:3.4vh auto 0;margin:clamp(16px,3.4vh,32px) auto 0}
+.goldvs{font-size:1.45rem;font-size:clamp(1rem,min(1.75vw,3vh),1.45rem)}
+.goldvs thead th{font-size:1.15em;color:var(--ink);font-weight:800}
+.goldvs tbody th{font-weight:700;color:var(--ink-soft);font-size:.92em;width:34%}
+.goldvs th:last-child,.goldvs td:last-child{background:#FFF1DE}
+.goldvs thead th:last-child{border-radius:14px 14px 0 0}
+.goldvs tr:last-child td:last-child{border-radius:0 0 14px 0}
+.colhead{display:inline-flex;align-items:center;gap:.5em}
+.colicon{width:1.9em;height:auto}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.big-stat{margin:.25em 0 0;font-size:9.5rem;font-size:clamp(4rem,min(10vw,17vh),9.5rem);font-weight:800;letter-spacing:-.045em;line-height:.9}
+.big-stat span{background:linear-gradient(transparent 58%,var(--sun) 58%,var(--sun) 92%,transparent 92%);padding:0 .08em}
+.stat-label{margin-top:.35em}
+.picto-card{width:100%;width:min(480px,100%);justify-self:center;transform:rotate(1.5deg);padding:2.4vh 2vw;padding:clamp(16px,2.4vh,24px) clamp(18px,2vw,26px)}
+.picto-card h3{margin:0 0 .6rem;font-size:1.35rem;font-size:clamp(1.05rem,min(1.6vw,2.7vh),1.35rem);font-weight:800}
+.picto-card svg{width:100%;height:auto;max-height:34vh;max-height:min(34vh,300px)}
+.picto-legend{display:flex;gap:1.4rem;margin-top:.6rem;font-weight:700;font-size:1.15rem;font-size:clamp(.95rem,min(1.4vw,2.4vh),1.15rem)}
+.picto-legend span{display:inline-flex;align-items:center;gap:.45em}
+.sw{display:inline-block;width:1em;height:1em;border-radius:4px;border:2.5px solid var(--ink);background:#fff}
+.sw-gov{background:var(--ink)}
+.picto-note{margin:.7rem 0 0;font-family:var(--hand);font-size:1.5rem;font-size:clamp(1.1rem,min(1.8vw,3vh),1.5rem)}
+.house-card svg{max-height:50vh;max-height:min(50vh,440px)}
+.then-now{display:flex;gap:2.4vw;gap:clamp(16px,2.4vw,30px);align-items:flex-end}
+.then-now > div + div{border-left:3px dotted var(--ink);padding-left:2.4vw;padding-left:clamp(16px,2.4vw,30px)}
+.then-now b{font-size:3.4rem;font-size:clamp(2rem,min(3.8vw,6.4vh),3.4rem)}
+.then-now span{max-width:12ch}
+.cancant{max-width:860px;margin-left:auto;margin-right:auto;width:100%}
+.cancant ul{font-size:1.6rem;font-size:clamp(1.1rem,min(1.9vw,3.2vh),1.6rem)}
+.punch h2{font-size:5.4rem;font-size:clamp(2.4rem,min(5.4vw,9.4vh),5.4rem);line-height:.96}
+.big21{font-variant-numeric:tabular-nums}
+.punch-tail{margin-top:.1em;font-weight:700}
+.receipt-wrap{width:100%;width:min(480px,100%)}
+.receipt h3{font-size:2rem}
+.line-item{padding:.7em 0}
+.line-item span{font-size:1.4rem;font-size:clamp(1.05rem,min(1.6vw,2.8vh),1.4rem)}
+.line-item b{font-size:2.6rem;font-size:clamp(1.6rem,min(2.9vw,4.9vh),2.6rem)}
+
+/* ---------- small screens ---------- */
+@media (max-width:860px){
+  .slide{place-items:start center;overflow-y:auto;padding:68px 16px 112px}
+  .split,.split.art-left,.split.chart-split{grid-template-columns:1fr}
+  .split .art{order:-1}
+  .art svg{max-height:30vh}
+  .chain{grid-template-columns:repeat(4,1fr)}
+  .stickers,.basics{grid-template-columns:1fr}
+  .versus,.panels,.cancant{grid-template-columns:1fr}
+  .sources{columns:1}
+  .score{font-size:.8rem}
+  .score th,.score td{padding:.45em .3em}
+  .mark{gap:.3em;align-items:flex-start}
+  .mark svg{width:1.05em;height:1.05em;margin-top:.1em}
+  .score-card{overflow-x:auto}
+  .keyhint{display:none}
+  .duo{grid-template-columns:1fr}
+  .duo .vs{text-align:center}
+  .lede.big{max-width:none}
+  .fred-card{transform:none}
+  .dom{width:9px;height:22px;border-width:2px}
+  .track{background:var(--bg);padding:6px 8px;border-radius:999px;box-shadow:0 0 0 6px var(--bg)}
+  .dominoes{gap:4px;height:26px}
+  .count{display:none}
+}
+/* short landscape screens, such as 1280x720 projectors */
+@media (max-height:800px) and (min-width:861px){
+  .slide{padding-top:46px;padding-bottom:92px}
+  .chip{margin-bottom:.55rem}
+  .lede{margin-top:.45em;line-height:1.34}
+  .stickers,.versus,.panels,.basics,.cancant{margin-top:14px}
+  .sticker p,.panel p{font-size:1rem}
+  .sticker small{margin-top:.45em}
+  .quote{margin-top:14px}
+  .rows{gap:.25rem 1rem;font-size:1.08rem}
+  .who svg{width:64px}
+  .crashes{margin-top:12px}
+  .crash-note{margin-top:.5rem}
+  .panel svg{max-height:19vh}
+  .tile{aspect-ratio:1/1.35}
+}
+@media (min-width:1600px) and (min-height:800px){
+  html{font-size:20px}
+  .inner{width:1500px;max-width:100%}
+  .slide{padding-left:72px;padding-right:72px}
+}
+@media (min-width:2400px) and (min-height:1200px){
+  html{font-size:28px}
+  .inner{width:2100px;max-width:100%}
+}
+@media (max-height:600px) and (min-width:861px){
+  .slide{padding-top:38px;padding-bottom:76px}
+  .lede.big{font-size:1.12rem;margin-top:.4em}
+  .sticker-row{margin-top:12px}
+  .sticker-row .side-sticker{padding:10px 16px 12px}
+  .sticker-row .side-sticker b{font-size:2rem}
+  .side-sticker span{font-size:.92rem}
+  .sources{font-size:.68rem;margin-top:8px}
+  .sources li{margin-bottom:.25em}
+}
+@media (min-width:1600px){
+  .navbtn{width:64px;height:64px}
+  .navbtn svg{width:28px;height:28px}
+  .dom{width:18px;height:38px}
+  .dominoes{height:44px;gap:9px}
+  .count{font-size:1.2rem}
+  .top .btn{font-size:1.15rem;padding:.55em 1.1em}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+@media print{
+  body{overflow:visible}
+  .slide{position:relative;opacity:1;visibility:visible;transform:none;page-break-after:always;height:100vh}
+  .track,.top,.count,.keyhint,#notesPanel{display:none}
+}
+</style>
+</head>
+<body data-chapter="intro">
+
+<!-- shared drawing defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="hard" x="-20%" y="-20%" width="150%" height="150%"><feDropShadow dx="6" dy="6" stdDeviation="0" flood-color="#1E1A4D" flood-opacity="1"/></filter>
+    <filter id="hardO" x="-20%" y="-20%" width="150%" height="150%"><feDropShadow dx="6" dy="6" stdDeviation="0" flood-color="#F7931A" flood-opacity="1"/></filter>
+    <!-- the bitcoin mark, drawn so it never depends on a font -->
+    <g id="bglyph">
+      <rect x="-17" y="-55" width="8" height="17" rx="2"/>
+      <rect x="0" y="-55" width="8" height="17" rx="2"/>
+      <rect x="-17" y="38" width="8" height="17" rx="2"/>
+      <rect x="0" y="38" width="8" height="17" rx="2"/>
+      <path fill-rule="evenodd" d="M-28 -42 H8 C25 -42 34 -33 34 -21 C34 -11 28 -5 20 -3 C31 -1 38 8 38 20 C38 33 27 42 10 42 H-28 Z M-11 -27 V-9 H6 C13 -9 17 -12.5 17 -18 C17 -23.5 13 -27 6 -27 Z M-11 5 V27 H8 C16 27 21 23 21 16 C21 9 16 5 8 5 Z"/>
+    </g>
+    <g id="domino">
+      <rect x="-44" y="-120" width="44" height="120" rx="9" class="o w"/>
+      <line x1="-38" y1="-60" x2="-6" y2="-60" class="o3"/>
+      <circle cx="-22" cy="-90" r="5" class="k"/>
+      <circle cx="-31" cy="-38" r="4.5" class="k"/><circle cx="-13" cy="-24" r="4.5" class="k"/>
+    </g>
+  </defs>
+</svg>
+
+<main class="deck" id="deck">
+
+<section class="slide" data-chapter="intro" aria-label="The Relevance of Bitcoin in Today's Future">
+  <div class="inner split">
+    <div class="copy title-copy">
+      <h1>The Relevance of Bitcoin in Today's Future</h1>
+      <p class="lede big">Explained simply.</p>
+    </div>
+    <div class="art">
+      <svg viewBox="0 20 600 350" role="img" aria-label="A row of dominoes falling over toward a Bitcoin coin">
+        <line x1="10" y1="340" x2="590" y2="340" class="o"/>
+        <!-- drawn back to front so earlier dominoes land on later ones -->
+        <g transform="translate(330,340)"><g class="fall" style="--a:22deg;--d:1.05s"><use href="#domino"/></g></g>
+        <g transform="translate(262,340)"><g class="fall" style="--a:44deg;--d:.8s"><use href="#domino"/></g></g>
+        <g transform="translate(194,340)"><g class="fall" style="--a:58deg;--d:.55s"><use href="#domino"/></g></g>
+        <g transform="translate(126,340)"><g class="fall" style="--a:66deg;--d:.3s"><use href="#domino"/></g></g>
+        <g transform="translate(58,340)"><g class="fall" style="--a:70deg;--d:.05s"><use href="#domino"/></g></g>
+        <!-- the coin -->
+        <g class="settle">
+          <g class="pop">
+            <circle cx="478" cy="248" r="92" class="o b"/>
+            <circle cx="478" cy="248" r="72" class="o3 n" style="stroke-width:3.5"/>
+            <use href="#bglyph" transform="translate(478,248) rotate(14)" fill="#fff"/>
+          </g>
+          <path d="M556 168 l14 -14 M566 190 l20 -4 M540 152 l4 -19" class="o"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="intro" aria-label="About Fred Krueger">
+  <div class="inner split">
+    <div class="copy">
+      <p class="lede fred-lede">I train under Fred. My goal is to take his expertise and explain it so anyone can understand.</p>
+    </div>
+    <div class="art">
+      <div class="card fred-card" role="group" aria-label="Fred Krueger's background">
+        <div class="fred-top">
+          <div class="mono" aria-hidden="true">FK</div>
+          <div><h3>Fred Krueger</h3><p>Bitcoin expert</p></div>
+        </div>
+        <ul class="creds">
+          <li><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M3 14 L18 7 L33 14 L18 21 Z" class="o3 y"/><path d="M9 17 V25 C9 28 27 28 27 25 V17" class="o3 n"/><path d="M33 14 V23" class="o3"/></svg><span>Stanford PhD</span></li>
+          <li><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="3" y="4" width="30" height="28" rx="5" class="o3 w"/><path d="M8 25 L15 17 L21 21 L29 10" class="o3 n" stroke="#1E9A57"/></svg><span>Wall Street trader</span></li>
+          <li><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 3 C25 9 26 18 22 26 H14 C10 18 11 9 18 3 Z" class="o3 w"/><circle cx="18" cy="14" r="3.5" class="o3 s"/><path d="M14 26 L11 33 L18 29 L25 33 L22 26" class="o3 r"/></svg><span>Tech company founder</span></li>
+          <li><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 7 C10 5 15 6 18 9 C21 6 26 5 32 7 V30 C26 28 21 29 18 32 C15 29 10 28 4 30 Z" class="o3 w"/><path d="M18 9 V32" class="o3"/></svg><span>Author of <em>Bitcoin One Million</em></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="ai" aria-label="AI workers cost way less than people">
+  <div class="inner stack">
+    <div class="copy center">
+      <h2>AI workers cost way less than people</h2>
+      <p class="lede big">No salary, no health insurance, and they never clock out.</p>
+    </div>
+    <div class="duo">
+      <div class="card"><svg viewBox="0 0 140 140" aria-hidden="true"><circle cx="66" cy="76" r="44" class="o sk"/><path d="M24 72 C22 40 46 26 68 28 C92 30 110 46 108 72 C100 58 88 52 72 52 C58 52 40 58 24 72 Z" class="o k"/><circle cx="52" cy="80" r="4.5" class="k"/><circle cx="80" cy="80" r="4.5" class="k"/><path d="M54 96 Q66 106 78 96" class="o n"/><rect x="100" y="96" width="28" height="32" rx="5" class="o w"/><path d="M128 104 C140 104 140 120 128 120" class="o n"/><path d="M108 88 C104 80 112 78 108 70 M118 88 C114 80 122 78 118 70" class="o3 n"/></svg><div><b>40</b><span>hours a week</span></div></div>
+      <span class="vs" aria-hidden="true">vs</span>
+      <div class="card ai"><svg viewBox="0 0 140 140" aria-hidden="true"><line x1="70" y1="14" x2="70" y2="32" class="o"/><circle cx="70" cy="12" r="7" class="o y"/><rect x="14" y="58" width="12" height="26" rx="4" class="o w"/><rect x="114" y="58" width="12" height="26" rx="4" class="o w"/><rect x="24" y="32" width="92" height="80" rx="18" class="o s"/><rect x="40" y="52" width="22" height="22" rx="6" class="o w"/><rect x="78" y="52" width="22" height="22" rx="6" class="o w"/><rect x="47" y="59" width="8" height="8" rx="2" class="k"/><rect x="85" y="59" width="8" height="8" rx="2" class="k"/><rect x="44" y="86" width="52" height="13" rx="5" class="o3 w"/><line x1="57" y1="86" x2="57" y2="99" class="o3"/><line x1="70" y1="86" x2="70" y2="99" class="o3"/><line x1="83" y1="86" x2="83" y2="99" class="o3"/></svg><div><b>168</b><span>hours a week</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="ai" aria-label="So jobs start to disappear">
+  <div class="inner split">
+    <div class="copy">
+      <h2>So jobs start to disappear</h2>
+      <div class="sticker-row">
+        <div class="card side-sticker"><b>121,000</b><span>US job cuts blamed on AI so far in 2026</span><small>Challenger, Gray &amp; Christmas</small></div>
+        <div class="card side-sticker tilt-r"><b>4,000</b><span>support jobs Salesforce cut after adding AI agents</span><small>Salesforce CEO, Sept 2025</small></div>
+      </div>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 540 380" role="img" aria-label="A robot sits at an office desk while a worker walks away carrying a box of belongings">
+        <line x1="10" y1="350" x2="530" y2="350" class="o"/>
+        <!-- robot behind the desk -->
+        <line x1="440" y1="104" x2="440" y2="122" class="o"/><circle cx="440" cy="100" r="7" class="o y"/>
+        <rect x="396" y="122" width="88" height="70" rx="16" class="o s"/>
+        <rect x="410" y="140" width="20" height="20" rx="5" class="o w"/><rect x="450" y="140" width="20" height="20" rx="5" class="o w"/>
+        <rect x="416" y="146" width="8" height="8" rx="2" class="k"/><rect x="456" y="146" width="8" height="8" rx="2" class="k"/>
+        <rect x="418" y="172" width="44" height="10" rx="4" class="o3 w"/>
+        <rect x="402" y="192" width="76" height="60" rx="14" class="o s"/>
+        <!-- monitor -->
+        <rect x="282" y="140" width="110" height="78" rx="8" class="o w"/>
+        <rect x="294" y="152" width="86" height="54" rx="4" class="l"/>
+        <path d="M302 168 h40 M302 180 h56 M302 192 h30" stroke="#1E1A4D" stroke-width="3" stroke-linecap="round"/>
+        <rect x="328" y="218" width="18" height="18" class="o w"/>
+        <!-- desk -->
+        <g class="pop"><rect x="250" y="234" width="260" height="20" rx="4" class="o y"/></g>
+        <rect x="266" y="254" width="16" height="96" class="o y"/><rect x="478" y="254" width="16" height="96" class="o y"/>
+        <path d="M402 222 L360 232 M478 222 L392 232" class="o"/>
+        <!-- worker leaving with a box -->
+        <path d="M140 316 l26 0 M146 334 l34 0 M136 300 l18 0" class="o"/>
+        <rect x="60" y="196" width="66" height="110" rx="30" class="o rs"/>
+        <circle cx="93" cy="168" r="28" class="o sk"/>
+        <path d="M68 160 C66 134 120 130 120 156 C108 146 84 146 68 160 Z" class="o k"/>
+        <circle cx="82" cy="172" r="3.5" class="k"/>
+        <path d="M78 186 Q84 182 90 186" class="o3 n"/>
+        <path d="M78 306 L66 350 M108 306 L122 350" class="o"/>
+        <path d="M92 226 C110 238 130 246 150 246" class="o n"/>
+        <rect x="120" y="230" width="96" height="66" rx="4" class="o" fill="#E9C79B"/>
+        <path d="M120 248 H216" class="o3"/>
+        <path d="M168 230 C168 204 156 192 140 190 M168 230 C170 206 186 196 200 196" class="o n" stroke="#1E9A57"/>
+        <path d="M140 190 C150 184 160 192 156 200 C148 204 140 198 140 190 Z M200 196 C190 188 180 196 184 204 C192 208 200 204 200 196 Z" class="o m"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="gov" aria-label="So the government steps in with new jobs">
+  <div class="inner split">
+    <div class="copy">
+      <h2>So the government steps in with new jobs</h2>
+      <p class="lede big">Someone has to keep an eye on all that AI.</p>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 520 420" role="img" aria-label="A government building with a now hiring banner">
+        <line x1="20" y1="366" x2="500" y2="366" class="o"/>
+        <g class="pop">
+          <rect x="70" y="330" width="380" height="36" class="o w"/>
+          <rect x="94" y="306" width="332" height="24" class="o w"/>
+          <rect x="112" y="200" width="296" height="106" class="o w"/>
+          <path d="M96 200 L260 146 L424 200 Z" class="o w"/>
+        </g>
+        <g class="o w">
+          <rect x="128" y="210" width="18" height="94"/><rect x="170" y="210" width="18" height="94"/><rect x="212" y="210" width="18" height="94"/><rect x="290" y="210" width="18" height="94"/><rect x="332" y="210" width="18" height="94"/><rect x="374" y="210" width="18" height="94"/>
+        </g>
+        <rect x="236" y="240" width="48" height="66" rx="24" class="o m"/>
+        <rect x="200" y="112" width="120" height="34" class="o w"/>
+        <path d="M200 112 C200 46 320 46 320 112 Z" class="o w"/>
+        <path d="M230 112 C230 72 290 72 290 112" class="o3 n"/>
+        <rect x="250" y="36" width="20" height="26" class="o w"/>
+        <line x1="260" y1="36" x2="260" y2="4" class="o"/>
+        <path d="M262 6 L296 14 L262 24 Z" class="o r"/>
+        <g transform="rotate(-5 260 190)">
+          <rect x="118" y="160" width="284" height="56" rx="10" class="o y"/>
+          <text x="260" y="198" text-anchor="middle" class="stext" font-size="31">Now hiring</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="gov" aria-label="After Covid">
+  <div class="inner split">
+    <div class="copy">
+      <h2>After Covid</h2>
+      <p class="big-stat"><span>3 in 10</span></p>
+      <p class="lede big stat-label">new US jobs in 2023 and 2024 were government jobs.</p>
+    </div>
+    <div class="card picto-card">
+      <svg viewBox="0 0 500 270" role="img" aria-label="Ten figures stand for ten new jobs. Three are filled in dark: about 3 in 10 new US jobs in 2023 and 2024 were government jobs.">
+          <g><circle cx="50" cy="58" r="17" class="o3 k"/><rect x="29" y="80" width="42" height="56" rx="18" class="o3 k"/></g>
+          <g><circle cx="150" cy="58" r="17" class="o3 k"/><rect x="129" y="80" width="42" height="56" rx="18" class="o3 k"/></g>
+          <g><circle cx="250" cy="58" r="17" class="o3 k"/><rect x="229" y="80" width="42" height="56" rx="18" class="o3 k"/></g>
+          <g><circle cx="350" cy="58" r="17" class="o3 sk"/><rect x="329" y="80" width="42" height="56" rx="18" class="o3 w"/></g>
+          <g><circle cx="450" cy="58" r="17" class="o3 sk"/><rect x="429" y="80" width="42" height="56" rx="18" class="o3 w"/></g>
+          <g><circle cx="50" cy="178" r="17" class="o3 sk"/><rect x="29" y="200" width="42" height="56" rx="18" class="o3 w"/></g>
+          <g><circle cx="150" cy="178" r="17" class="o3 sk"/><rect x="129" y="200" width="42" height="56" rx="18" class="o3 w"/></g>
+          <g><circle cx="250" cy="178" r="17" class="o3 sk"/><rect x="229" y="200" width="42" height="56" rx="18" class="o3 w"/></g>
+          <g><circle cx="350" cy="178" r="17" class="o3 sk"/><rect x="329" y="200" width="42" height="56" rx="18" class="o3 w"/></g>
+          <g><circle cx="450" cy="178" r="17" class="o3 sk"/><rect x="429" y="200" width="42" height="56" rx="18" class="o3 w"/></g>
+        </svg>
+      <div class="picto-legend"><span><i class="sw sw-gov"></i>Government job</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide" data-chapter="markets" aria-label="New AI rules hit Big Tech hardest">
+  <div class="inner split">
+    <div class="copy">
+      <h2>New AI rules hit Big Tech hardest</h2>
+      <p class="lede big">Nvidia, Microsoft and Google have the most to lose.</p>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 520 420" role="img" aria-label="A computer chip tied up in red tape">
+        <g class="pop"><rect x="140" y="90" width="240" height="240" rx="22" class="o k"/></g>
+        <g class="o w">
+          <rect x="172" y="66" width="16" height="24" rx="3"/><rect x="216" y="66" width="16" height="24" rx="3"/><rect x="260" y="66" width="16" height="24" rx="3"/><rect x="304" y="66" width="16" height="24" rx="3"/><rect x="340" y="66" width="16" height="24" rx="3"/>
+          <rect x="172" y="330" width="16" height="24" rx="3"/><rect x="216" y="330" width="16" height="24" rx="3"/><rect x="260" y="330" width="16" height="24" rx="3"/><rect x="304" y="330" width="16" height="24" rx="3"/><rect x="340" y="330" width="16" height="24" rx="3"/>
+          <rect x="116" y="122" width="24" height="16" rx="3"/><rect x="116" y="166" width="24" height="16" rx="3"/><rect x="116" y="210" width="24" height="16" rx="3"/><rect x="116" y="254" width="24" height="16" rx="3"/><rect x="116" y="294" width="24" height="16" rx="3"/>
+          <rect x="380" y="122" width="24" height="16" rx="3"/><rect x="380" y="166" width="24" height="16" rx="3"/><rect x="380" y="210" width="24" height="16" rx="3"/><rect x="380" y="254" width="24" height="16" rx="3"/><rect x="380" y="294" width="24" height="16" rx="3"/>
+        </g>
+        <rect x="190" y="140" width="140" height="140" rx="12" class="o l"/>
+        <text x="260" y="232" text-anchor="middle" class="stext" font-size="64">AI</text>
+        <g transform="rotate(-14 260 210)">
+          <rect x="10" y="106" width="500" height="50" class="o r"/>
+          <text x="260" y="141" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="30" fill="#fff">rules   rules   rules   rules</text>
+          <rect x="10" y="266" width="500" height="50" class="o r"/>
+          <text x="260" y="301" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="30" fill="#fff">rules   rules   rules   rules</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="markets" aria-label="When Big Tech wobbles, the whole market wobbles">
+  <div class="inner split art-left">
+    <div class="art">
+      <svg viewBox="0 0 440 440" role="img" aria-label="A tower of blocks. Seven big blocks on top make up a third of it; hundreds of small blocks below make up the rest.">
+        <line x1="30" y1="400" x2="410" y2="400" class="o"/>
+        <g transform="rotate(4 220 400)">
+          <g class="pop"><rect x="110" y="84" width="220" height="316" class="w"/></g>
+          <!-- bottom two thirds: the other 493 -->
+          <g class="o3 w">
+            <rect x="110" y="190" width="44" height="30"/><rect x="154" y="190" width="44" height="30"/><rect x="198" y="190" width="44" height="30"/><rect x="242" y="190" width="44" height="30"/><rect x="286" y="190" width="44" height="30"/>
+            <rect x="110" y="220" width="44" height="30"/><rect x="154" y="220" width="44" height="30"/><rect x="198" y="220" width="44" height="30"/><rect x="242" y="220" width="44" height="30"/><rect x="286" y="220" width="44" height="30"/>
+            <rect x="110" y="250" width="44" height="30"/><rect x="154" y="250" width="44" height="30"/><rect x="198" y="250" width="44" height="30"/><rect x="242" y="250" width="44" height="30"/><rect x="286" y="250" width="44" height="30"/>
+            <rect x="110" y="280" width="44" height="30"/><rect x="154" y="280" width="44" height="30"/><rect x="198" y="280" width="44" height="30"/><rect x="242" y="280" width="44" height="30"/><rect x="286" y="280" width="44" height="30"/>
+            <rect x="110" y="310" width="44" height="30"/><rect x="154" y="310" width="44" height="30"/><rect x="198" y="310" width="44" height="30"/><rect x="242" y="310" width="44" height="30"/><rect x="286" y="310" width="44" height="30"/>
+            <rect x="110" y="340" width="44" height="30"/><rect x="154" y="340" width="44" height="30"/><rect x="198" y="340" width="44" height="30"/><rect x="242" y="340" width="44" height="30"/><rect x="286" y="340" width="44" height="30"/>
+            <rect x="110" y="370" width="44" height="30"/><rect x="154" y="370" width="44" height="30"/><rect x="198" y="370" width="44" height="30"/><rect x="242" y="370" width="44" height="30"/><rect x="286" y="370" width="44" height="30"/>
+          </g>
+          <!-- top third: the giant seven -->
+          <g class="o r">
+            <rect x="110" y="137" width="55" height="53"/><rect x="165" y="137" width="55" height="53"/><rect x="220" y="137" width="55" height="53"/><rect x="275" y="137" width="55" height="53"/>
+            <rect x="110" y="84" width="73.3" height="53"/><rect x="183.3" y="84" width="73.3" height="53"/>
+          </g>
+          <g transform="rotate(-14 300 84)"><rect x="262" y="60" width="73" height="53" class="o r"/></g>
+        </g>
+        <path d="M352 54 l18 -12 M362 78 l22 -2 M340 34 l6 -20" class="o"/>
+        <text x="14" y="128" class="htext" font-size="26">7 giants</text>
+        <path d="M60 138 C70 158 88 160 112 152" class="o n" style="stroke-width:3"/><path d="M100 146 l13 6 l-9 10" class="o n" style="stroke-width:3"/>
+        <text x="14" y="300" class="htext" font-size="26">the other</text>
+        <text x="14" y="326" class="htext" font-size="26">493</text>
+      </svg>
+    </div>
+    <div class="copy">
+      <h2>When Big Tech wobbles, the whole market wobbles</h2>
+      <p class="lede big">Just 7 companies make up a third of America's biggest stock index.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="money" aria-label="Real estate isn't a safe bet either">
+  <div class="inner split">
+    <div class="copy">
+      <h2>Real estate isn't a safe bet either</h2>
+      <p class="lede big">A house can't move, so it's easy to tax. And it's already getting harder to buy and sell.</p>
+      <div class="sticker-row">
+        <div class="card side-sticker"><b>7.2%</b><span>mortgage rate, up from 6.2% a year ago</span><small>Freddie Mac, Nov 2026</small></div>
+        <div class="card side-sticker tilt-r"><b>4.7 years</b><span>of a family's income to buy a typical home</span><small>Harvard JCHS, 2026</small></div>
+      </div>
+    </div>
+    <div class="art card art-card house-card">
+      <svg viewBox="-24 26 428 192" role="img" aria-label="A house with a property tax tag and a For sale sign covered in cobwebs. It cannot move, and it is not selling.">
+          <line x1="-20" y1="200" x2="380" y2="200" class="o"/>
+          <path d="M40 210 l12 -10 M80 210 l12 -10 M120 210 l12 -10 M160 210 l12 -10 M200 210 l12 -10 M240 210 l12 -10 M280 210 l12 -10 M320 210 l12 -10" class="o3"/>
+          <path d="M100 104 L190 34 L280 104" class="o n"/>
+          <rect x="120" y="100" width="140" height="100" class="o y"/>
+          <path d="M100 104 L190 34 L280 104 Z" class="o r"/>
+          <rect x="170" y="140" width="40" height="60" class="o w"/>
+          <rect x="134" y="118" width="28" height="26" class="o s"/>
+          <rect x="220" y="118" width="28" height="26" class="o s"/>
+          <path d="M268 96 L300 118" class="o3"/>
+          <g transform="rotate(12 330 140)"><rect x="282" y="110" width="112" height="62" rx="8" class="o w"/><circle cx="296" cy="124" r="5" class="o3 n"/><text x="342" y="140" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="19" fill="#1E1A4D">property tax</text><text x="342" y="161" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="19" fill="#1E1A4D">every year</text></g>
+        
+          <line x1="20" y1="200" x2="20" y2="124" class="o"/>
+          <rect x="-14" y="96" width="78" height="42" rx="6" class="o w"/>
+          <text x="25" y="124" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="20" fill="#1E1A4D">For sale</text>
+          <path d="M-14 96 l28 0 M-14 96 l0 28 M-14 96 l22 22 M-4 96 q0 10 -10 10 M6 96 q0 20 -20 20 M16 96 q0 30 -30 30" stroke="#1E1A4D" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>
+        </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="money" aria-label="And the safety net keeps stretching">
+  <div class="inner split">
+    <div class="copy">
+      <h2>And the safety net keeps stretching</h2>
+      <p class="lede big">Longer unemployment pay, bigger retirement checks, and more help with healthcare, housing and food.</p>
+      <div class="sticker-row">
+        <div class="card side-sticker"><b>26 &rarr; 79</b><span>weeks of unemployment pay during Covid</span><small>US Labor Department</small></div>
+        <div class="card side-sticker tilt-r"><b>$1.6T</b><span>paid in Social Security checks every year</span><small>Social Security Trustees, 2026</small></div>
+      </div>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 540 400" role="img" aria-label="A safety net sagging almost to the ground under a pile of people, with one more person falling in">
+        <line x1="10" y1="384" x2="530" y2="384" class="o"/>
+        <g transform="rotate(5 50 384)"><rect x="42" y="122" width="16" height="262" rx="4" class="o w"/></g>
+        <g transform="rotate(-5 490 384)"><rect x="482" y="122" width="16" height="262" rx="4" class="o w"/></g>
+        <path d="M30 150 l-14 -6 M28 172 l-16 2 M510 150 l14 -6 M512 172 l16 2" class="o"/>
+        <!-- one more person dropping in -->
+        <path d="M282 12 l0 18 M318 12 l0 18 M300 4 l0 14" class="o"/>
+        <path d="M284 84 L266 52 M316 84 L334 52" class="o"/>
+        <ellipse cx="300" cy="98" rx="19" ry="25" class="o c"/>
+        <circle cx="300" cy="62" r="14" class="o sk"/>
+        <path d="M294 66 q6 5 12 0" class="o3 n"/>
+        <g transform="rotate(-28 185 252)"><ellipse cx="185" cy="252" rx="22" ry="29" class="o s"/><circle cx="185" cy="212" r="16" class="o sk"/><circle cx="180" cy="210" r="2.6" class="k"/><circle cx="190" cy="210" r="2.6" class="k"/></g><g transform="rotate(-12 232 279)"><ellipse cx="232" cy="279" rx="22" ry="29" class="o rs"/><circle cx="232" cy="239" r="16" class="o sk"/><circle cx="227" cy="237" r="2.6" class="k"/><circle cx="237" cy="237" r="2.6" class="k"/></g><g transform="rotate(0 270 244)"><ellipse cx="270" cy="244" rx="22" ry="29" class="o w"/><circle cx="270" cy="204" r="16" class="o sk"/><circle cx="265" cy="202" r="2.6" class="k"/><circle cx="275" cy="202" r="2.6" class="k"/></g><g transform="rotate(12 308 279)"><ellipse cx="308" cy="279" rx="22" ry="29" class="o m"/><circle cx="308" cy="239" r="16" class="o sk"/><circle cx="303" cy="237" r="2.6" class="k"/><circle cx="313" cy="237" r="2.6" class="k"/></g><g transform="rotate(28 355 252)"><ellipse cx="355" cy="252" rx="22" ry="29" class="o l"/><circle cx="355" cy="212" r="16" class="o sk"/><circle cx="350" cy="210" r="2.6" class="k"/><circle cx="360" cy="210" r="2.6" class="k"/></g>
+        <path d="M58 140 Q270 420 482 140 L482 162 Q270 460 58 162 Z" fill="#fff" fill-opacity=".55"/>
+        <path d="M58 140 L82 193 M82 169 L58 162 M82 169 L105 221 M105 195 L82 193 M105 195 L129 245 M129 218 L105 221 M129 218 L152 265 M152 237 L129 245 M152 237 L176 282 M176 252 L152 265 M176 252 L199 294 M199 264 L176 282 M199 264 L223 304 M223 273 L199 294 M223 273 L246 309 M246 278 L223 304 M246 278 L270 311 M270 280 L246 309 M270 280 L294 309 M294 278 L270 311 M294 278 L317 304 M317 273 L294 309 M317 273 L341 294 M341 264 L317 304 M341 264 L364 282 M364 252 L341 294 M364 252 L388 265 M388 237 L364 282 M388 237 L411 245 M411 218 L388 265 M411 218 L435 221 M435 195 L411 245 M435 195 L458 193 M458 169 L435 221 M458 169 L482 162 M482 140 L458 193" stroke="#1E1A4D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M58 140 Q270 420 482 140" class="o n" style="stroke-width:5"/>
+        <path d="M58 162 Q270 460 482 162" class="o n" style="stroke-width:5"/>
+        <path d="M392 213 l9 -8 l6 9 l9 -10" fill="none" stroke="#E4485A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="412" y="193" class="htext" font-size="27" text-anchor="middle">creak...</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="money" aria-label="Who pays for all of this?">
+  <div class="inner split">
+    <div class="copy">
+      <h2>Who pays for all of this?</h2>
+      <p class="lede big">The government borrows, and prints more money.</p>
+      <div class="card side-sticker"><b>$40.7T</b><span>what the US government owes today</span><small>US Treasury, Nov 2026</small></div>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 520 440" role="img" aria-label="A money printer spitting out dollar bills">
+        <g transform="rotate(-8 400 90)"><rect x="330" y="60" width="140" height="64" rx="8" class="o c"/><circle cx="400" cy="92" r="17" class="o3 w"/><text x="400" y="101" text-anchor="middle" class="stext" font-size="24">$</text></g>
+        <g transform="rotate(12 90 110)"><rect x="24" y="78" width="140" height="64" rx="8" class="o c"/><circle cx="94" cy="110" r="17" class="o3 w"/><text x="94" y="119" text-anchor="middle" class="stext" font-size="24">$</text></g>
+        <g transform="rotate(-18 250 40)"><rect x="186" y="8" width="128" height="58" rx="8" class="o c"/><circle cx="250" cy="37" r="15" class="o3 w"/><text x="250" y="45" text-anchor="middle" class="stext" font-size="22">$</text></g>
+        <g class="pop">
+          <rect x="150" y="126" width="220" height="70" rx="10" class="o g"/>
+          <rect x="90" y="190" width="340" height="150" rx="24" class="o w"/>
+        </g>
+        <rect x="150" y="126" width="220" height="70" rx="10" class="o g"/>
+        <rect x="90" y="190" width="340" height="150" rx="24" class="o w"/>
+        <circle cx="380" cy="230" r="11" class="o r"/><circle cx="346" cy="230" r="11" class="o y"/>
+        <rect x="130" y="290" width="260" height="16" rx="6" class="k"/>
+        <g transform="rotate(4 260 360)"><rect x="160" y="300" width="200" height="94" rx="10" class="o c"/><circle cx="260" cy="347" r="26" class="o3 w"/><text x="260" y="360" text-anchor="middle" class="stext" font-size="34">$</text></g>
+        <text x="0" y="246" class="htext" font-size="44" transform="rotate(-10 30 246)">brrr</text>
+        <path d="M60 300 l-30 10 M64 330 l-34 22" class="o"/>
+        <path d="M456 262 l34 -8 M452 296 l38 10" class="o"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide" data-chapter="btc" aria-label="Only 21 million bitcoin. Ever.">
+  <div class="inner split chart-split">
+    <div class="copy">
+      <h2>Only 21 million bitcoin. Ever.</h2>
+      <p class="lede big">No company, bank or president can print more.</p>
+    </div>
+    <div class="card chart-card" id="supplyCard">
+      <h3>Bitcoin in existence</h3>
+      <svg id="supply" viewBox="0 0 640 340" role="img" aria-label="Line chart of total bitcoin supply. It climbs fast after 2009, passes 20 million in 2026, then flattens toward the 21 million cap, which it reaches around 2140."></svg>
+      <div class="tip" id="supplyTip"></div>
+      <button class="btn table-toggle" id="tableBtn" aria-expanded="false" aria-controls="supplyTable">Show as table</button>
+      <table class="data-table" id="supplyTable" hidden>
+        <thead><tr><th scope="col">Year (mid-year)</th><th scope="col">Bitcoin in existence</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="btc" aria-label="Can the government stop it?">
+  <div class="inner stack">
+    <div class="copy center">
+      <h2>Can the government stop it?</h2>
+      <p class="lede big">It can make rules. It can't make more bitcoin.</p>
+    </div>
+    <div class="cancant">
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E1A4D"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>It can</h3><ul><li>Tax it</li><li>Regulate where you buy it</li></ul></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E1A4D"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>It can't</h3><ul><li>Print more of it</li><li>Switch it off</li></ul></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide" data-chapter="btc" aria-label="Couldn't you say the same about gold?">
+  <div class="inner stack">
+    <div class="copy center">
+      <h2>Couldn't you say the same about gold?</h2>
+      <p class="lede big">Almost. Bitcoin takes gold's best idea and fixes its weak spots.</p>
+    </div>
+    <div class="card score-card goldvs-card">
+      <table class="score goldvs">
+        <thead><tr><th scope="col"><span class="sr-only">Question</span></th><th scope="col"><span class="colhead"><svg class="colicon" viewBox="0 0 64 44" aria-hidden="true"><path d="M12 15 L52 15 L60 37 L4 37 Z" class="o3" fill="#F2C14E"/><path d="M18 6 L46 6 L52 15 L12 15 Z" class="o3" fill="#FFE08A"/><path d="M16 30 L30 30" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/></svg>Gold</span></th><th scope="col"><span class="colhead"><svg class="colicon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" class="o3 b"/><use href="#bglyph" transform="translate(32,32) scale(.36) rotate(14)" fill="#fff"/></svg>Bitcoin</span></th></tr></thead>
+        <tbody>
+          <tr><th scope="row">A hard limit on how much will ever exist?</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>No, more is mined every year</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes, 21 million</span></td></tr>
+          <tr><th scope="row">Own it through a fund (ETF)?</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#8A86B0"/><path d="M7.5 9.5h9M7.5 14.5h9" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Yes, you trust the fund</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#8A86B0"/><path d="M7.5 9.5h9M7.5 14.5h9" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Yes, you trust the fund</span></td></tr>
+          <tr><th scope="row">Hold the real thing yourself?</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Impractical (heavy)</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>12 words, can't be faked</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="btc" aria-label="So where do you keep your money?">
+  <div class="inner stack">
+    <div class="copy">
+      <h2>So where do you keep your money?</h2>
+    </div>
+    <div class="card score-card">
+      <table class="score">
+        <thead><tr><th scope="col">Where you keep it</th><th scope="col">Can more be made?</th><th scope="col">Hurt by AI rules?</th><th scope="col">Take it with you if you move?</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Cash</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Yes, printed</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>No</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Limits at borders</span></td></tr>
+          <tr><th scope="row">Stocks</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Yes, new shares</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Could be, Big Tech</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Through a middleman</span></td></tr>
+          <tr><th scope="row">Real estate</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Yes, new buildings</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Not directly</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>No</span></td></tr>
+          <tr><th scope="row">Gold</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Yes, slowly mined</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Not directly</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#E4485A"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Heavy, declared at borders</span></td></tr>
+          <tr class="btc-row"><th scope="row">Bitcoin</th><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Only a trickle, capped at 21M</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Not directly</span></td><td><span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1E9A57"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes, with a 12-word secret phrase</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<section class="slide" data-chapter="btc" aria-label="It's a bumpy ride. Think long term.">
+  <div class="inner split art-left">
+    <div class="art">
+      <svg viewBox="0 0 560 380" role="img" aria-label="A rollercoaster track with big drops that keeps climbing higher, with a dashed arrow pointing up labeled the long run. Not to scale.">
+        <path d="M20 330 C56 330 70 262 100 238 C126 218 136 300 170 300 C210 300 226 178 262 152 C290 132 300 262 336 262 C380 262 398 84 436 62 C462 48 480 64 494 104 C506 140 520 178 540 196" class="n" stroke="#F7931A" stroke-width="12" stroke-linecap="round"/>
+        <path d="M20 330 C56 330 70 262 100 238 C126 218 136 300 170 300 C210 300 226 178 262 152 C290 132 300 262 336 262 C380 262 398 84 436 62 C462 48 480 64 494 104 C506 140 520 178 540 196" class="n" stroke="#fff" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round"/>
+        <line x1="10" y1="352" x2="550" y2="352" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <!-- cart at the top -->
+        <g transform="translate(508 124) rotate(56)">
+          <circle cx="-6" cy="-14" r="11" class="o sk"/><circle cx="18" cy="-16" r="11" class="o sk"/>
+          <path d="M-18 -26 l-6 -12 M30 -28 l6 -12" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <rect x="-28" y="-8" width="60" height="26" rx="8" class="o r"/>
+          <circle cx="-14" cy="20" r="6" class="o w"/><circle cx="20" cy="20" r="6" class="o w"/>
+        </g>
+        <text x="170" y="336" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="26" fill="#fff">&minus;84% (2017&ndash;18)</text>
+        <text x="336" y="298" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="26" fill="#fff">&minus;77% (2021&ndash;22)</text>
+        <text x="552" y="246" text-anchor="end" font-family="Patrick Hand, cursive" font-size="26" fill="#FFB866">you are here</text>
+        <path d="M34 318 L470 34" stroke="#FFB866" stroke-width="5" stroke-dasharray="12 12" stroke-linecap="round" fill="none"/>
+        <path d="M444 34 L474 32 L462 60" stroke="#FFB866" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <text x="300" y="70" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="32" fill="#FFB866">the long run</text>
+        <text x="20" y="40" font-family="Patrick Hand, cursive" font-size="22" fill="#C9C5F2">not to scale</text>
+      </svg>
+    </div>
+    <div class="copy">
+      <h2>It's a bumpy ride. Think long term.</h2>
+      <p class="lede big">The drops look scary up close. Zoom out, and it has kept climbing.</p>
+      <div class="card side-sticker then-now">
+        <div><b>$329</b><span>one bitcoin in 2015</span></div>
+        <div><b>~$58,600</b><span>one bitcoin today</span></div>
+      </div>
+      <p class="small muted">Not financial advice.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="btc" aria-label="When everything else loses value, people will turn to Bitcoin">
+  <div class="inner split">
+    <div class="copy punch">
+      <h2>When everything else loses value, people will turn to Bitcoin.</h2>
+    </div>
+    <div class="art">
+      <svg viewBox="0 0 600 420" role="img" aria-label="All the dominoes have fallen flat. The Bitcoin coin is still standing and glowing.">
+        <circle cx="430" cy="226" r="150" fill="#F7931A" class="glow" opacity=".45"/>
+        <circle cx="430" cy="226" r="122" fill="#F7931A" opacity=".25"/>
+        <line x1="10" y1="340" x2="590" y2="340" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <g transform="translate(250,340)"><g transform="rotate(84)"><use href="#domino"/></g></g>
+        <g transform="translate(176,340)"><g transform="rotate(86)"><use href="#domino"/></g></g>
+        <g transform="translate(102,340)"><g transform="rotate(87)"><use href="#domino"/></g></g>
+        <g transform="translate(28,340)"><g transform="rotate(88)"><use href="#domino"/></g></g>
+        <g class="pop">
+          <circle cx="430" cy="226" r="112" class="o b"/>
+        </g>
+        <circle cx="430" cy="226" r="88" class="o3 n" style="stroke-width:4"/>
+        <use href="#bglyph" transform="translate(430,226) rotate(14) scale(1.25)" fill="#fff"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-chapter="intro" aria-label="Sources">
+  <div class="inner stack">
+    <div class="copy">
+      <h2>Where the numbers come from</h2>
+    </div>
+    <ol class="sources">
+      <li>Employer health premiums: <a href="https://www.kff.org/other-health/workers-now-pay-7471-on-average-annually-for-family-health-coverage-up-9-or-621-from-2025-benchmark-employer-health-benefits-survey-finds/">KFF Employer Health Benefits Survey 2026</a></li>
+      <li>Benefits share of pay: <a href="https://www.bls.gov/news.release/ecec.nr0.htm">US Bureau of Labor Statistics (BLS), Employer Costs for Employee Compensation</a></li>
+      <li>300M jobs exposed: <a href="https://www.theregister.com/2023/03/28/investment_bank_forecasts_llms_could/">Goldman Sachs, 2023 (via The Register)</a></li>
+      <li>AI-blamed layoffs: <a href="https://www.hcamag.com/us/specialization/transformation/ai-blamed-for-121401-job-cuts-but-the-labor-data-isnt-buying-it/594129">Challenger, Gray &amp; Christmas, via HCA (Nov 2026)</a></li>
+      <li>Salesforce support cuts: <a href="https://fortune.com/2025/09/02/salesforce-ceo-billionaire-marc-benioff-ai-agents-jobs-layoffs-customer-service-sales/">Fortune, Sept 2025</a></li>
+      <li>Young workers: <a href="https://digitaleconomy.stanford.edu/publication/canaries-in-the-coal-mine/">Stanford, Canaries in the Coal Mine (rev. 2026)</a></li>
+      <li>Jobs 2021 to 2025: <a href="https://data.bls.gov/timeseries/CES0000000001">BLS total nonfarm payrolls</a></li>
+      <li>Government jobs: <a href="https://data.bls.gov/timeseries/CES9000000001">BLS government payrolls</a></li>
+      <li>Covid unemployment weeks: <a href="https://www.dol.gov/sites/dolgov/files/ETA/advisories/UIPL/2021/UIPL_14-21_acc.pdf">US Labor Department, UIPL 14-21</a></li>
+      <li>Social Security spending and trust fund: <a href="https://www.everycrsreport.com/files/2026-06-25_IF13256_e1a3332f1a9ae29c3698a1f2e5a5a1d598ec6c57.html">Congressional Research Service on the 2026 Trustees Report</a></li>
+      <li>Money supply: <a href="https://fred.stlouisfed.org/series/M2SL">Federal Reserve, M2</a></li>
+      <li>Inflation: <a href="https://www.bls.gov/opub/ted/2022/consumer-prices-up-9-1-percent-over-the-year-ended-june-2022-largest-increase-in-40-years.htm">BLS, CPI June 2022</a></li>
+      <li>State AI laws: National Conference of State Legislatures (NCSL), AI legislation tracker, Oct 2026 (no link)</li>
+      <li>Nvidia write-off: <a href="https://investor.nvidia.com/news/press-release-details/2025/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2026/default.aspx">Nvidia, May 2025</a></li>
+      <li>Big Tech AI spending: <a href="https://finance.yahoo.com/markets/article/magnificent-7-earnings-rush-reveals-ai-spending-surge-with-hyperscaler-capex-set-to-reach-725-billion-in-2026-224901707.html">Yahoo Finance, 2026</a></li>
+      <li>Nasdaq drop after the midterms: <a href="https://www.devdiscourse.com/article/international/4002378-democrats-election-wins-spooks-ai-investors-hammering-stocks">Reuters, via Devdiscourse, Nov 2026</a></li>
+      <li>Magnificent 7 share: <a href="https://www.fool.com/research/magnificent-seven-sp-500/">Motley Fool Research</a></li>
+      <li>California Prop 40: <a href="https://www.kqed.org/elections/results/california/proposition-40">KQED / AP results</a></li>
+      <li>Home prices vs income: <a href="https://virginiarealtors.org/2026/07/06/highlights-from-the-2026-jchs-state-of-the-nations-housing-report/">Harvard JCHS 2026, summarized by Virginia Realtors</a></li>
+      <li>Mortgage rates: <a href="https://www.freddiemac.com/pmms">Freddie Mac</a></li>
+      <li>Home sales: <a href="https://www.nar.realtor/newsroom/existing-home-sales-decreased-5-5-percent-october-nar-report">National Association of Realtors, Oct 2026</a></li>
+      <li>National debt: <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/">US Treasury, Debt to the Penny</a> and <a href="https://www.gao.gov/assets/gao-27-108795.pdf">GAO, November 2026</a></li>
+      <li>Dollar value: <a href="https://www.bls.gov/data/inflation_calculator.htm">BLS CPI inflation calculator</a></li>
+      <li>Bitcoin reserve: <a href="https://www.whitehouse.gov/presidential-actions/2025/03/establishment-of-the-strategic-bitcoin-reserve-and-united-states-digital-asset-stockpile/">White House executive order, March 6, 2025</a></li>
+      <li>Bitcoin supply: <a href="https://www.theblock.co/news/ecosystems/2026-03-09-bitcoin-mined-supply-hits-20-million-btc-392660">The Block, Mar 2026</a></li>
+      <li>Gold supply and stock: <a href="https://www.gold.org/goldhub/gold-focus/2026/03/you-asked-we-answered-are-we-running-out-gold">World Gold Council, 2026</a></li>
+      <li>Fake gold bars: <a href="https://www.nbcnews.com/news/us-news/counterfeit-gold-bars-discovered-new-york-city-flna1B5988405">NBC News, 2012</a></li>
+      <li>Gold vs Bitcoin in 2025: <a href="https://www.gold.org/goldhub/research/gold-market-commentary-december-2025">World Gold Council, Dec 2025</a></li>
+      <li>Gold fund redemptions: <a href="https://www.sec.gov/Archives/edgar/data/1222333/000143774925036305/gld20250930_10k.htm">SPDR Gold Trust annual report, 2025</a></li>
+      <li>Bitcoin fund redemptions: <a href="https://www.sec.gov/newsroom/press-releases/2025-101-sec-permits-kind-creations-redemptions-crypto-etps">SEC, July 2025</a></li>
+      <li>China mining ban: <a href="https://www.jbs.cam.ac.uk/insight/2022/bitcoin-mining-new-data-reveal-a-surprising-resurgence/">Cambridge Centre for Alternative Finance</a> and <a href="https://cointelegraph.com/news/new-bitcoin-hash-rate-highs-remove-any-trace-of-china-mining-ban">Cointelegraph, Oct 2021</a></li>
+      <li>Bitcoin price: <a href="https://fortune.com/article/price-of-bitcoin-11-25-2026/">Fortune, Nov 25, 2026</a> and <a href="https://fred.stlouisfed.org/series/CBBTCUSD">FRED (Coinbase)</a></li>
+    </ol>
+    <p class="small muted" style="margin-top:1rem">This deck explains one investor's view of the future. It is not financial advice.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- controls -->
+<div class="top">
+  <button class="btn" id="fsBtn">Full screen</button>
+</div>
+<div class="count" id="count" aria-live="polite"></div>
+<nav class="track" aria-label="Slides">
+  <button class="btn navbtn" id="prevBtn" aria-label="Previous slide"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 3 L6 10 L13 17" fill="none" stroke="#1E1A4D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <div class="dominoes" id="dominoes"></div>
+  <button class="btn navbtn" id="nextBtn" aria-label="Next slide"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3 L14 10 L7 17" fill="none" stroke="#1E1A4D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const track=document.getElementById('dominoes');
+  const count=document.getElementById('count');
+  let cur=-1;
+
+  const doms=slides.map((s,k)=>{
+    const b=document.createElement('button');
+    b.className='dom';b.type='button';
+    b.setAttribute('aria-label','Go to slide '+(k+1)+': '+(s.getAttribute('aria-label')||''));
+    b.addEventListener('click',()=>go(k));
+    track.appendChild(b);return b;
+  });
+
+  function go(n,fromHash){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    if(n===cur)return;
+    slides.forEach((s,k)=>{
+      const on=k===n;
+      s.classList.toggle('is-active',on);
+      s.classList.toggle('is-past',k<n);
+      s.setAttribute('aria-hidden',on?'false':'true');
+      if('inert' in s) s.inert=!on;
+    });
+    doms.forEach((d,k)=>{
+      d.classList.toggle('down',k<n);
+      d.classList.toggle('current',k===n);
+      if(k===n)d.setAttribute('aria-current','step');else d.removeAttribute('aria-current');
+    });
+    document.body.dataset.chapter=slides[n].dataset.chapter;
+    count.textContent=(n+1)+' of '+slides.length;
+    cur=n;
+    if(!fromHash){try{history.replaceState(null,'','#'+(n+1))}catch(e){}}
+  }
+  const next=()=>go(cur+1), prev=()=>go(cur-1);
+  document.getElementById('nextBtn').addEventListener('click',next);
+  document.getElementById('prevBtn').addEventListener('click',prev);
+
+  function toggleFs(){
+    const el=document.documentElement;
+    const isFs=document.fullscreenElement||document.webkitFullscreenElement;
+    const fn=isFs?(document.exitFullscreen||document.webkitExitFullscreen):(el.requestFullscreen||el.webkitRequestFullscreen);
+    if(!fn)return;
+    try{const p=fn.call(isFs?document:el);if(p&&p.catch)p.catch(function(){})}catch(err){}
+  }
+  document.getElementById('fsBtn').addEventListener('click',toggleFs);
+
+  document.addEventListener('keydown',e=>{
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    const t=e.target;
+    if(t&&t.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;
+    const k=e.key||'', c=e.keyCode;
+    /* keyboard, clicker and TV remote: arrows, page keys, OK/Enter, channel and media keys */
+    if(k==='ArrowRight'||k==='ArrowDown'||k==='PageDown'||k===' '||k==='Enter'||k==='MediaFastForward'||k==='MediaTrackNext'||k==='MediaPlayPause'||k==='ChannelUp'||
+       c===39||c===40||c===34||c===32||c===13||c===417||c===427||c===10252){e.preventDefault();next();return}
+    if(k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'||k==='MediaRewind'||k==='MediaTrackPrevious'||k==='ChannelDown'||
+       c===37||c===38||c===33||c===412||c===428){e.preventDefault();prev();return}
+    if(k==='Home'||c===36){e.preventDefault();go(0);return}
+    if(k==='End'||c===35){e.preventDefault();go(slides.length-1);return}
+    if(k==='f'||k==='F'){toggleFs()}
+  });
+  /* point-and-click anywhere (TV remotes often drive a pointer): right two thirds = next, left third = back */
+  document.addEventListener('click',e=>{
+    const t=e.target;
+    if(t&&t.closest&&t.closest('button,a,#supplyCard,.top,.track'))return;
+    if(e.clientX<window.innerWidth/3)prev();else next();
+  });
+  let tx=null,ty=null;
+  document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(tx===null)return;
+    const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4){dx<0?next():prev()}
+    tx=null;
+  },{passive:true});
+  window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1),10);if(n)go(n-1,true)});
+
+  /* ---------- supply chart, computed from Bitcoin's issuance schedule ---------- */
+  (function(){
+    const svg=document.getElementById('supply');
+    const tip=document.getElementById('supplyTip');
+    const card=document.getElementById('supplyCard');
+    const NS='http://www.w3.org/2000/svg';
+    const W=640,H=340,L=58,R=622,T=34,B=294;
+    const X0=2009,X1=2060,END=2140,CAP=21e6;
+    // supply at each halving; issuance is steady between halvings
+    const pts=[[2009.01,0],[2012.91,10.5e6],[2016.52,15.75e6],[2020.36,18.375e6],[2024.30,19.6875e6]];
+    let s=19.6875e6,r=3.125,y=2024.30;
+    while(y<END-4){s+=210000*r;r/=2;y+=4;pts.push([+y.toFixed(2),s])}
+    pts.push([END,CAP]);
+    const NOW=2026.90;
+    const supplyAt=yr=>{
+      for(let k=1;k<pts.length;k++){
+        if(yr<=pts[k][0]){const [a,sa]=pts[k-1],[b,sb]=pts[k];return sa+(sb-sa)*(yr-a)/(b-a)}
+      }return CAP;
+    };
+    const x=yr=>L+(yr-X0)/(X1-X0)*(R-L);
+    const yv=v=>B-(v/CAP)*(B-T);
+    const el=(n,a,p)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
+
+    const grid=el('g',{class:'grid'});
+    const axis=el('g',{class:'axis'});
+    [0,7e6,14e6].forEach(v=>{
+      el('line',{x1:L,x2:R,y1:yv(v),y2:yv(v)},grid);
+      el('text',{x:L-10,y:yv(v)+5,'text-anchor':'end'},axis).textContent=v===0?'0':(v/1e6)+'M';
+    });
+    [2009,2020,2030,2040,2050,2060].forEach(yr=>{
+      el('text',{x:x(yr),y:B+24,'text-anchor':yr===2009?'start':yr===2060?'end':'middle'},axis).textContent=yr;
+    });
+    el('line',{x1:L,x2:R,y1:B,y2:B,stroke:'#C9C5E8','stroke-width':1});
+    // the cap
+    el('line',{x1:L,x2:R,y1:yv(CAP),y2:yv(CAP),stroke:'#1E1A4D','stroke-width':1.5,'stroke-dasharray':'6 5'});
+    el('text',{x:R,y:yv(CAP)-10,'text-anchor':'end','font-family':'Bricolage Grotesque, system-ui, sans-serif','font-weight':700,'font-size':17,fill:'#1E1A4D'}).textContent='The limit: 21,000,000';
+
+    const toPath=list=>list.map((p,k)=>(k?'L':'M')+x(p[0]).toFixed(1)+' '+yv(p[1]).toFixed(1)).join(' ');
+    const past=pts.filter(p=>p[0]<NOW).concat([[NOW,supplyAt(NOW)]]);
+    const future=[[NOW,supplyAt(NOW)]].concat(pts.filter(p=>p[0]>NOW&&p[0]<X1)).concat([[X1,supplyAt(X1)]]);
+    el('path',{d:toPath(past)+` L${x(NOW)} ${B} L${x(X0)} ${B} Z`,fill:'#D06A00','fill-opacity':.1});
+    el('path',{d:toPath(past),fill:'none',stroke:'#D06A00','stroke-width':2.5,'stroke-linejoin':'round','stroke-linecap':'round'});
+    el('path',{d:toPath(future),fill:'none',stroke:'#D06A00','stroke-width':2.5,'stroke-linejoin':'round','stroke-linecap':'round','stroke-opacity':.45});
+    const nx=x(NOW),ny=yv(supplyAt(NOW));
+    el('circle',{cx:nx,cy:ny,r:6.5,fill:'#D06A00',stroke:'#fff','stroke-width':2.5});
+    el('text',{x:nx+14,y:ny+30,'font-family':'Bricolage Grotesque, system-ui, sans-serif','font-weight':700,'font-size':17,fill:'#1E1A4D'}).textContent='Today: about 20.1 million';
+    el('text',{x:R,y:yv(CAP)+92,'text-anchor':'end','font-family':'Patrick Hand, cursive','font-size':20,fill:'#4E4A7E'}).textContent='then slower and slower, until about 2140';
+
+    // hover layer
+    const cross=el('line',{x1:0,x2:0,y1:T,y2:B,stroke:'#1E1A4D','stroke-width':1,opacity:0});
+    const dot=el('circle',{r:6,fill:'#D06A00',stroke:'#fff','stroke-width':2.5,opacity:0});
+    const hit=el('rect',{x:L,y:T-10,width:R-L,height:B-T+10,fill:'transparent'});
+    const fmt=v=>Math.round(v).toLocaleString('en-US');
+    function show(clientX){
+      const bb=svg.getBoundingClientRect();
+      const sx=(clientX-bb.left)/bb.width*W;
+      const yr=Math.max(X0,Math.min(X1,X0+(sx-L)/(R-L)*(X1-X0)));
+      const v=supplyAt(yr);
+      const px=x(yr),py=yv(v);
+      cross.setAttribute('x1',px);cross.setAttribute('x2',px);cross.setAttribute('opacity',.35);
+      dot.setAttribute('cx',px);dot.setAttribute('cy',py);dot.setAttribute('opacity',1);
+      const cb=card.getBoundingClientRect();
+      tip.style.left=(bb.left-cb.left+px/W*bb.width)+'px';
+      tip.style.top=(bb.top-cb.top+py/H*bb.height)+'px';
+      tip.innerHTML='<b>'+Math.floor(yr)+'</b>about '+(v/1e6).toFixed(2)+' million bitcoin'+(yr>NOW?' (scheduled)':'');
+      tip.style.opacity=1;
+    }
+    function hide(){cross.setAttribute('opacity',0);dot.setAttribute('opacity',0);tip.style.opacity=0}
+    hit.addEventListener('pointermove',e=>show(e.clientX));
+    hit.addEventListener('pointerdown',e=>show(e.clientX));
+    hit.addEventListener('pointerleave',hide);
+
+    // table view
+    const tb=document.querySelector('#supplyTable tbody');
+    [2009,2012,2016,2020,2024,2026,2028,2032,2040,2060,2100,2140].forEach(yr=>{
+      const tr=document.createElement('tr');
+      const v=yr===2009?0:supplyAt(yr===2026?NOW:yr+0.5);
+      tr.innerHTML='<td>'+yr+'</td><td>'+(v===0?'0':'about '+(v/1e6).toFixed(2)+' million')+'</td>';tb.appendChild(tr);
+    });
+    const tbtn=document.getElementById('tableBtn'),tbl=document.getElementById('supplyTable');
+    tbtn.addEventListener('click',()=>{const open=tbl.hidden;tbl.hidden=!open;tbtn.setAttribute('aria-expanded',String(open));tbtn.textContent=open?'Hide table':'Show as table';svg.style.display=open?'none':'block'});
+  })();
+
+  const start=parseInt(location.hash.slice(1),10);
+  go(start?start-1:0,true);
+})();
+</script>
+</body>
+</html>
